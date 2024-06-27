@@ -1,57 +1,97 @@
 #panorama {
-    width: 100%;
-    height: 800px;
+    width: 100vw;   /* ビューポートの幅全体を使用 */
+    height: 95vh;  /* ビューポートの高さ全体を使用 */
+    position: fixed; /* 必要に応じて調整 */
+    top: 5vh;
+    left: 0;
+    z-index: 0; /* 他の要素が前面に来るように調整 */
 }
-
 .logo {
     position: fixed;
-    top: 20px; /* 上から10pxの位置に変更 */
-    left: 20px;
-    z-index: 1000;
+    top: 3px; /* 上から10pxの位置に変更 */
+    left: 10px;
+    z-index: 100;
 }
 
 .logo img {
-    width: 100px; /* ロゴの幅を少し小さく調整 */
+    width:60px; /* ロゴの幅を少し小さく調整 */
     height: auto;
 }
 
 h1 {
-    margin-top: 80px; /* タイトルの上の余白を調整 */
+    margin-top: 5px; /* タイトルの上の余白を調整 */
     text-align: center;
 }
 
 .menu {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 5px;
+    right: 25px;
     z-index: 1000;
     cursor: pointer;
 }
 
 .menu img {
-    width: 40px; /* メニューアイコンの幅 */
-    height: 40px; /* メニューアイコンの高さ */
+    width: 50px; /* メニューアイコンの幅 */
+    height: 50px; /* メニューアイコンの高さ */
 }
 
-.menu-content {
+/* オーバーレイスタイル */
+.overlay {
     display: none;
     position: fixed;
-    right: 40px;
-    top: 60px;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    padding: 10px;
-    width: 150px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 500; /* メニュー内容より低いがロゴより高い */
+}
+
+/* メニューのアニメーション */
+.menu-content {
+    display: block;
+    position: fixed;
+    right: 0px;
+    top: 0;
+    height: 100%;
+    width: 250px; /* メニューの幅を調整 */
+    background-color: rgb(233, 233, 233);
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
+    transform: translateX(100%);
+    transition: transform 0.7s ease;
 }
 
 .menu-content a {
     display: block;
     color: black;
-    padding: 8px;
+    padding: 10px;
     text-decoration: none;
 }
 
 .menu-content a:hover {
+    background-color: #ffffff;
+}
+
+.menu-bar {
+    position: fixed;
+    top: 8px;
+    right: 100px;
+    z-index: 100;
+    display: flex;
+    background-color: rgb(240, 230, 215);
+    padding: 3px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.menu-bar a {
+    color: black;
+    padding: 8px 16px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.menu-bar a:hover {
     background-color: #f0f0f0;
 }

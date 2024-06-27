@@ -8,15 +8,16 @@ pannellum.viewer('panorama', {
             "title": "HUNSUI", /*表示する写真名(建物名)など必要あれば記入)*/
             "type": "equirectangular", //表示方式,いじる必要なし
             "panorama": "image/360pic/test.jpg", /*表示する写真のパス*/
-            "hotSpots": [ /*移動ボタン*/
-                {
+            "autoLoad": true, /*自動読み込み*/
+            "hotSpots": [ 
+                {   /*インフォメーション*/
                     "pitch": 10,
                     "yaw": 0,
                     "type": "info",
                     "text": "１号館",
                     "URL": "https://wireless.ryukoku.ac.jp/in/map/s-1.pdf"
                 },
-                {
+                {   /*移動ボタン*/
                     "pitch": -20, /*上下座標,0が真正面*/
                     "yaw": 0, /*左右座標,時計回り360度方式で90で右,270で左*/
                     "type": "scene",
@@ -49,9 +50,13 @@ pannellum.viewer('panorama', {
 
 function toggleMenu() {
     var menu = document.getElementById('menuContent');
-    if (menu.style.display === 'block') {
-        menu.style.display = 'none';
+    var overlay = document.querySelector('.overlay');
+    if (menu.style.transform === 'translateX(0%)') {
+        menu.style.transform = 'translateX(100%)';
+        overlay.style.display = 'none';
     } else {
-        menu.style.display = 'block';
+        menu.style.transform = 'translateX(0%)';
+        overlay.style.display = 'block';
     }
 }
+
