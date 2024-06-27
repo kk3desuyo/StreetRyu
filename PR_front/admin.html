@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Ryukoku Online Open Campus</title>
-    <link rel="stylesheet" href="https://cdn.pannellum.org/2.5/pannellum.css" />
+    <title>管理者ページ - 龍谷大学 360度マップ</title>
+    <link rel="stylesheet" href="admin-style.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.pannellum.org/2.5/pannellum.js"></script>
 </head>
@@ -13,8 +13,10 @@
             <img src="image/logos/street_ryu.png" alt="Logo">
         </a>
     </div>    
-    <h1>龍谷大学 360度マップ</h1>
-    <div id="panorama"></div>
+    <h1>管理者ページ</h1>
+    <div id="admin-content">
+        <!-- その他の管理機能をここに実装 -->
+    </div>
     <div class="overlay" onclick="toggleMenu()"></div>
     <div class="menu">
         <img src="image/logos/menu-icon.png" alt="Menu" onclick="toggleMenu()">
@@ -30,8 +32,17 @@
         <a href="#">Link 2</a>
         <a href="#">Link 3</a>
     </div> 
+    <div class="login-container">
+        <form id="loginForm">
+            <label for="username">ユーザー名:</label>
+            <input type="text" id="username" required>
+            <label for="password">パスワード:</label>
+            <input type="password" id="password" required>
+            <button type="submit">ログイン</button>
+        </form>
+    </div>
+    <script src="admin-script.js"></script>
     <script src="script.js"></script>
+
 </body>
 </html>
-
-
