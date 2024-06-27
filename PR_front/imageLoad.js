@@ -2,7 +2,7 @@
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
+console.log("デバッグよう");
 // 画像読み込み時にすべての移動ボタンを取得
 window.onload = async () => {
     // 画面クリックしないと始まらないやつの対策
