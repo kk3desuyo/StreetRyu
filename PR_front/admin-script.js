@@ -3,7 +3,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     var username = document.getElementById('username').value;
     var password = document.getElementById('password').value;
 
-    // 仮のユーザー名とパスワード
+    // ユーザー名とパスワード
     var correctUsername = 'pr03';
     var correctPassword = 'Y2381149';
 
