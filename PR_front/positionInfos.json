@@ -1,0 +1,27 @@
+{
+  "positions": [
+    {
+      "positionId": "location1",
+      "moveSets": {
+        "positionId1": [
+          {
+            "rangeA": [30.0, 60.0], //positionId1に移動する範囲指定の一つ目
+            "rangeB": [45.0, 90.0] //positionId1に移動する範囲指定の2つ目
+          }
+        ]
+      }
+    },
+    {
+      "positionId": "location2",
+      "moveSets": {
+        "positionId1": [
+          {
+            //分岐がなくまっすぐの場合
+            "rangeA": [],
+            "rangeB": []
+          }
+        ]
+      }
+    }
+  ]
+}
