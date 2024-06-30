@@ -89,3 +89,17 @@ function toggleMenu() {
     overlay.style.display = "block";
   }
 }
+
+document.addEventListener("click", function (event) {
+  var menu = document.getElementById("menuContent");
+  var overlay = document.querySelector(".overlay");
+  var menuButton = document.querySelector(".menu img");
+  if (
+    !menu.contains(event.target) &&
+    !menuButton.contains(event.target) &&
+    menu.style.transform === "translateX(0%)"
+  ) {
+    menu.style.transform = "translateX(100%)";
+    overlay.style.display = "none";
+  }
+});
