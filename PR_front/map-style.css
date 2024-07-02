@@ -1,3 +1,5 @@
+@charset "utf-8";
+
 #panorama {
     width: 100vw;   /* ビューポートの幅全体を使用 */
     height: 100vh;  /* ビューポートの高さ全体を使用 */

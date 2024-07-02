@@ -1,4 +1,4 @@
-function toggleLanguageMenu() {
+﻿function toggleLanguageMenu() {
     var dropdown = document.getElementById("languageDropdown");
     if (dropdown.classList.contains('open')) {
         dropdown.classList.remove('open');

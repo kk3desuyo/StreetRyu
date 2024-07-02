@@ -1,4 +1,4 @@
-pannellum.viewer('panorama', {
+﻿pannellum.viewer('panorama', {
     "default": {
         "firstScene": "hunsui",
         "sceneFadeDuration": 1000
