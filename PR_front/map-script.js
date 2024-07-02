@@ -8,6 +8,7 @@ pannellum.viewer('panorama', {
             "title": "HUNSUI", /*表示する写真名(建物名)など必要あれば記入)*/
             "type": "equirectangular", //表示方式,いじる必要なし
             "panorama": "image/360pic/test.jpg", /*表示する写真のパス*/
+
             "autoLoad": true, /*自動読み込み*/
             "hotSpots": [ 
                 {   /*インフォメーション*/
@@ -62,12 +63,17 @@ function toggleMenu() {
 
 function toggleSection(sectionId) {
     var section = document.getElementById(sectionId);
-    if (section.style.display === 'block') {
-        section.style.display = 'none';
+    var arrow = section.previousElementSibling.querySelector('.arrow'); // 矢印要素を取得
+    if (section.style.height !== '0px') {
+        section.style.height = '0px';
+        arrow.textContent = '▸'; // メニューが閉じるとき矢印を▷に変更
     } else {
-        section.style.display = 'block';
+        var sectionHeight = section.scrollHeight + 'px';
+        section.style.height = sectionHeight;
+        arrow.textContent = '▾'; // メニューが開くとき矢印を▽に変更
     }
 }
+
 
 document.addEventListener('click', function(event) {
     var menu = document.getElementById('menuContent');

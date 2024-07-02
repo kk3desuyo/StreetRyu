@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lng="ja">
 
 <head>
     <meta char=set="UTF-8">
-    <title>Ryukoku Online Open Campus</title>
+    <title>Street Ryu</title>
     <link rel="icon" href="image/logos/street_ryu.png">
     <link rel="stylesheet" href="pannellum/pannellum.css" />
     <link rel="stylesheet" href="map-style.css">
     <script src="pannellum/pannellum.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap" rel="stylesheet">
+
 
 </head>
 
@@ -23,10 +27,12 @@
                 </div>
                 <p class="logo-text">STREET RYU</p>
             </div>
-            <a href="#">TOP PAGE</a>
+            <a href="index.html" class="top-page">TOP PAGE</a>
             <div class="menu-section">
-                <h3 onclick="toggleSection('buildings')">Buildings</h3>
-                <div id="buildings" class="submenu" style="display: none;">
+                <h3 onclick="toggleSection('buildings')">
+                    Buildings <span class="arrow">▸</span>
+                </h3>
+                <div id="buildings" class="submenu">
                     <a href="#">1号館</a>
                     <a href="#">2号館</a>
                     <a href="#">3号館</a>
@@ -41,22 +47,28 @@
                 </div>
             </div>
             <div class="menu-section">
-                <h3 onclick="toggleSection('restaurants')">Restaurants</h3>
-                <div id="restaurants" class="submenu" style="display: none;">
+                <h3 onclick="toggleSection('restaurants')">
+                    Restaurants <span class="arrow">▸</span>
+                </h3>
+                <div id="restaurants" class="submenu">
                     <a href="#">青志館</a>
                     <a href="#">青雲館</a>
                 </div>
             </div>
             <div class="menu-section">
-                <h3 onclick="toggleSection('convenience')">Convenience store</h3>
-                <div id="convenience" class="submenu" style="display: none;">
+                <h3 onclick="toggleSection('convenience')">
+                    Convenience store <span class="arrow">▸</span>
+                </h3>
+                <div id="convenience" class="submenu">
                     <a href="#">瀬田ショップSMYLE</a>
                     <a href="#">ファミリーマート</a>
                 </div>
             </div>
             <div class="menu-section">
-                <h3 onclick="toggleSection('sports')">Sports</h3>
-                <div id="sports" class="submenu" style="display: none;">
+                <h3 onclick="toggleSection('sports')">
+                    Sports <span class="arrow">▸</span>
+                </h3>
+                <div id="sports" class="submenu">
                     <a href="#">体育館</a>
                     <a href="#">SETA DOME</a>
                     <a href="#">多目的グラウンド</a>
@@ -65,8 +77,10 @@
                 </div>
             </div>
             <div class="menu-section">
-                <h3 onclick="toggleSection('others')">Other buildings</h3>
-                <div id="others" class="submenu" style="display: none;">
+                <h3 onclick="toggleSection('others')">
+                    Other buildings <span class="arrow">▸</span>
+                </h3>
+                <div id="others" class="submenu">
                     <a href="#">図書館</a>
                     <a href="#">学生交流会館</a>
                     <a href="#">智光館</a>

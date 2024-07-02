@@ -9,15 +9,25 @@
 
 .menu {
     position: fixed;
-    top: 5px;
-    left: 5px;
+    top: 10px;
+    left: 10px;
     z-index: 1000;
     cursor: pointer;
 }
 
 .menu img {
-    width: 50px; /* メニューアイコンの幅 */
-    height: 50px; /* メニューアイコンの高さ */
+    width: 35px; /* メニューアイコンの幅 */
+    height: 40px; /* メニューアイコンの高さ */
+}
+
+.close-btn img {
+    width: 20px; /* メニューアイコンの幅 */
+    height: 20px; /* メニューアイコンの高さ */
+}
+
+.close-btn {
+    
+    margin-right: 30px; /* ロゴとの間隔 */
 }
 
 .menu-content {
@@ -33,6 +43,7 @@
     transition: transform 0.65s ease;
     font-family: 'Arial', sans-serif;
     padding-top: 0;
+    overflow-y: auto; /* 縦スクロールを有効に */
 }
 
 
@@ -42,6 +53,17 @@
     padding: 10px;
     text-decoration: none;
     font-size: 18px;
+}
+
+.menu-content a.top-page {
+    margin-bottom: 45px; /* 'TOP PAGE' と次のセクション間に20pxのマージンを設定 */
+    font-family: 'Bungee', sans-serif;
+    display: block;
+    color: white;
+    padding: 4px;
+    text-decoration: none;
+    font-size: 18px;
+    background-color: rgb(200, 0, 0); /* 背景色を変更する場合 */
 }
 
 .menu-content a:hover {
@@ -57,32 +79,59 @@
     padding: 10px;
 }
 
-.close-btn {
-    margin-right: 20px; /* ロゴとの間隔 */
-}
+
 
 .logo-text {
-    font-family: 'Roboto', sans-serif; /* Robotoフォントを使用 */
+    position: fixed;
+    right: 10%;
+    font-family: 'Jaro', sans-serif; /* Robotoフォントを使用 */
     color: white; /* 白色テキスト */
-    font-size: 24px; /* 文字サイズ */
-    font-weight: 700; /* 太字 */
+    font-size: 22px; /* 文字サイズ */
+    font-weight: 600; /* 太字 */
+}
+
+.menu-section {
+    margin-bottom: 10px; /* セクション間のマージンを減らす */
+    padding-bottom: 10px; /* 必要に応じてパディングも調整 */
 }
 
 .menu-section h3 {
     cursor: pointer;
+    font-family: 'Teko', sans-serif;
     color: white;
-    padding: 10px;
-    font-size: 20px;
+    margin-top: 0; /* タイトル上のマージンを削除または減らす */
+    margin-bottom: 0; /* タイトル下のマージンを減らす */
+    padding: 4px;
+    font-size: 22px;
     background-color: rgb(200, 0, 0);
 }
 
+.arrow {
+    display: inline-block;  /* 矢印をインラインブロックとして配置 */
+    transition: transform 0.3s ease-in-out;  /* トランジションでスムーズな表示変更を実現 */
+}
+
+
+.submenu {
+    height: 0px;
+    overflow: hidden;
+    transition: height 0.5s ease-out;
+}
+
 .submenu a {
-    display: block;
     color: white;
+    font-family: 'Yomogi', sans-serif; /* Robotoフォントを使用 */
+
     padding: 5px 20px;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 20px;
+    overflow-y: auto; /* 縦スクロールを有効に */
     background-color: rgb(230, 0, 18);
+}
+
+.submenu.open {
+    height: 0;
+    transition: height 0.5s ease-in;
 }
 
 .submenu a:hover {
@@ -96,8 +145,19 @@
     width: 500px;
     height: 500px;
     border-radius: 50%;
-    z-index: 1000;
+    z-index: 1;
     opacity: 0.5;
     pointer-events: none;
   }
   
+  /* スクロールバーを非表示にするスタイル */
+.menu-content::-webkit-scrollbar,
+.submenu::-webkit-scrollbar {
+    display: none; /* WebKitブラウザでスクロールバーを非表示に */
+}
+
+.menu-content,
+.submenu {
+    -ms-overflow-style: none; /* IEおよびEdgeでスクロールバーを非表示に */
+    scrollbar-width: none; /* Firefoxでスクロールバーを非表示に */
+}

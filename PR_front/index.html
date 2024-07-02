@@ -1,37 +1,49 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>Ryukoku Online Open Campus</title>
     <link rel="icon" href="image/logos/street_ryu.png">
-    <link rel="stylesheet" href="https://cdn.pannellum.org/2.5/pannellum.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.pannellum.org/2.5/pannellum.js"></script>
 </head>
+
 <body>
+    <div class="overlay" id="overlay"></div>
     <div class="logo">
         <a href="index.html">
             <img src="image/logos/street_ryu.png" alt="Logo">
         </a>
-    </div>    
-    <h1>TEST PAGE<a href="map.html">実装予定MAPページ</a></h1>
-    <div id="panorama"></div>
-    <div class="overlay" onclick="toggleMenu()"></div>
-    <div class="menu">
-        <img src="image/logos/menu-icon.png" alt="Menu" onclick="toggleMenu()">
-        <div class="menu-content" id="menuContent">
-            <a href="map.html">実装予定MAPページ</a>
-            <a href="map.html">実装予定MAPページ</a>
-            <a href="map.html">実装予定MAPページ</a>
-            <a href="admin.html">管理者用</a> 
+    </div>  
+    <div class="main-container">
+        <div class="button-container">
+            <a href="map.html" class="image-button">
+                <div class="image-container">
+                    <img src="image/logos/sr.png" alt="Street Ryu">
+                </div>
+                <span class="button-text">Street Ryu</span>
+            </a>
+            <a href="tour.html" class="image-button">
+                <div class="image-container">
+                    <img src="image/logos/sr.png" alt="Street Tour">
+                </div>
+                <span class="button-text">Street Tour</span>
+            </a>
+        </div>
+        <div class="language-menu" onclick="toggleLanguageMenu()">
+            <button class="language-button">Japanese ▼</button>
+            <div class="language-dropdown" id="languageDropdown">
+                <a href="#" onclick="setLanguage('en'); return false;">English</a>
+                <a href="#" onclick="setLanguage('ko'); return false;">Korean</a>
+                <a href="#" onclick="setLanguage('zh'); return false;">Chinese</a>
+            </div>
         </div>
     </div>
-    <div class="menu-bar">
-        <a href="map.html">実装予定MAPページ</a>
-        <a href="map.html">実装予定MAPページ</a>
-        <a href="map.html">実装予定MAPページ</a></div> 
     <script src="script.js"></script>
 </body>
+
 </html>
-
-
