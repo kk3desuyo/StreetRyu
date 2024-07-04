@@ -1,43 +1,221 @@
 // Pannellum 2.5.6, https://github.com/mpetroff/pannellum
 
+//メモ-------------------------------------------------------
+//viewer.setPitch(viewer.getPitch() + 10);で視点の位置帰れるみたい
+//viewer.setYaw(viewer.getYaw() - 10);
 var cursorX_g = 0; //パネリウムウィンドウ内の平面上における座標
 var cursorY_g = 0;
 var pitch_g = 0; //360度空間におけるカーソルの位置
 var yaw_g = 0;
 
-// 基準点の設定
+// 基準点の設定 撮影者の位置
 const centerPitch = -90; // 基準となる中心点のピッチ
 const centerYaw = 12; // 基準となる中心点のヨー
 
 //矢印画像の座標調整ようパラメーーたー　矢印画像変える場合には変更の必要あり
 const POSIMODIFY_X = -250;
-const POSIMODIFY_Y = -170;
+const POSIMODIFY_Y = -240;
+
+//移動前の地点を保s時
+var prevLocation_g;
 
 var isLoadComplete = false;
 
+//現在のカーソルの位置においてクリックした場合の移動先
+var moveLocationByCursor;
+
+//現在の地点の移動ボタン一覧
+var movePosi = [];
+
 //移動ボタンの範囲を管理するためのくらす
 class ManageMoveRange {
+  static JSONFILEPATH = "./positionInfos.json";
+  //moveSetting関数が正常に呼び出されたかを保持する
+  static isProcessing = false;
+  //静的初期化子
+  static {
+    fetch("./positionInfos.json")
+      .then((response) => response.json())
+      .then((data) => {
+        this.posiInfos = data;
+      })
+      .catch((error) => {
+        console.error(
+          "JSONのデータ取得時にエラーが発生しました。Error:",
+          error
+        );
+      });
+  }
+  //各地点の範囲とそれに対する移動先
   static ranges = [];
   static locations = [];
-  //ranges・・・rangeインスタンスが格納されている配列 locations・・範囲に対応する行き先
-  //配列のインデックスで範囲と行き先が対応している
-  static set(ranges, locations) {
-    this.ranges = ranges;
-    this.locations = locations;
-  }
 
-  //移動範囲の設定を行う関数  データの入手先は悩み中 js or json
-  static moveSetting() {
-    this.set([new Range(-90, 90), new Range(999, 999)], ["rouya", "TEST HEYA"]);
+  //現在の地点を取得してその地点に対する範囲と移動先のデータを取得
+  static getPosiInfoByLocation(location) {
+    console.log(
+      "これまでの情報を初期化しました。",
+      this.ranges,
+      this.locations
+    );
+    console.log(location, "を検索します。");
+    console.log(this.posiInfos);
+    var nowLocationInfo = this.posiInfos.positions.find(
+      (position) => position.positionId === location
+    );
+    if (typeof nowLocationInfo === "undefined") {
+      return;
+    }
+    console.log(
+      "検索地点",
+      location,
+      "locationINFO:",
+      nowLocationInfo,
+      "JSONのデータが正しくありません"
+    );
+    //地点の格納
+    this.locations = nowLocationInfo.moveSets.locations;
+
+    //地点に対応する視点の範囲情報
+    var array = nowLocationInfo.moveSets.ranges;
+
+    //何個目の範囲を処理しているかの数をカウント
+    var countProcessRange = 0;
+    // console.log("座標情報を取得しました:", array, this.locations);
+    for (let i = 0; i < array.length; i += 2) {
+      console.log(i, this.locations);
+      var splitedRanges = this.splitRange(array[i], array[i + 1]);
+
+      countProcessRange++;
+      // 分割する場合には地点を一つ増やす
+      if (splitedRanges.length == 2) {
+        console.log(
+          countProcessRange,
+          "番目を複製します。",
+          "複製前:",
+          this.locations
+        );
+
+        //この部分深いコピーをしないと、バグるので注意
+        // 深いコピーを作成
+        let newLocations = JSON.parse(JSON.stringify(this.locations));
+        newLocations.splice(
+          countProcessRange,
+          0,
+          this.locations[countProcessRange - 1]
+        );
+        this.locations = newLocations;
+
+        console.log(this.locations);
+      }
+
+      for (const range of splitedRanges) {
+        const rangeInstance = new Range(range[0], range[1]);
+        //分割なしの時には普通に追加
+        this.ranges.push(rangeInstance);
+      }
+    }
+  }
+  //180度越えの場合には二つの範囲に分割
+  static splitRange(yawSmall, yawLarge) {
+    // console.log("spilit");
+    yawSmall = Range.changeCoordinateForPannellum(yawSmall);
+    yawLarge = Range.changeCoordinateForPannellum(yawLarge);
+
+    if (yawSmall <= yawLarge) {
+      // console.log("分割なし");
+      // 範囲が連続している場合
+      return [[yawSmall, yawLarge]];
+    } else {
+      console.log("分割しました");
+      // -180度と180度を跨ぐ場合
+      return [
+        [-180, yawLarge],
+        [yawSmall, 180],
+      ];
+    }
+  }
+  //移動範囲の設定を行う関数
+  // static moveSetting(location) {
+  //   return new Promise((resolve, reject) => {
+  //     try {
+  //       prevLocation_g = location;
+  //       // 初期化
+  //       this.ranges = [];
+  //       this.locations = [];
+  //       console.log(location, "の移動設定をします。");
+
+  //       // データの取得と静的変数への代入
+  //       // 非同期処理の例としてsetTimeoutを使用
+  //       setTimeout(() => {
+  //         this.getPosiInfoByLocation(location);
+  //         console.log(
+  //           location,
+  //           "の移動設定情報は",
+  //           "ranges:",
+  //           this.ranges,
+  //           "location:",
+  //           this.locations
+  //         );
+  //         resolve();
+  //       }, 1); // 例として1秒の遅延を追加
+  //     } catch (error) {
+  //       reject(error);
+  //     }
+  //   });
+  // }
+  // static moveSetting(location) {
+  //   prevLocation_g = location;
+  //   //初期化
+  //   this.ranges = [];
+  //   this.locations = [];
+  //   console.log(location, "の移動設定をします。");
+  //   //データの取得と静的変数への代入
+  //   this.getPosiInfoByLocation(location);
+
+  //   console.log(
+  //     location,
+  //     "の移動設定情報は",
+  //     "ranges:",
+  //     this.ranges,
+  //     "location:",
+  //     this.locations
+  //   );
+  //   ManageMoveRange.isProcessing = false;
+  // }
+  static async moveSetting(location) {
+    return new Promise((resolve, reject) => {
+      try {
+        prevLocation_g = location;
+        // 初期化
+        this.ranges = [];
+        this.locations = [];
+        console.log(location, "の移動設定をします。");
+
+        // データの取得と静的変数への代入
+        this.getPosiInfoByLocation(location);
+
+        console.log(
+          location,
+          "の移動設定情報は",
+          "ranges:",
+          this.ranges,
+          "locations:",
+          this.locations
+        );
+
+        // 非同期処理が完了したことを示す
+        resolve();
+      } catch (error) {
+        // エラーハンドリング
+        reject(error);
+      }
+    });
   }
 
   //クリックした位置の移動先を計算
   static getMovePlace(clickYaw) {
-    console.log(this.ranges);
+    // console.log("範囲設定:", this.ranges, "地点", this.locations);
     for (var i = 0; i < this.ranges.length; i++) {
-      if (i == this.ranges.length - 1) {
-        return this.locations[i];
-      }
       //範囲内にあるかの計算
       if (
         this.ranges[i].yawSmall <= clickYaw &&
@@ -46,12 +224,33 @@ class ManageMoveRange {
         return this.locations[i];
       }
     }
+    return this.locations[i];
   }
 }
 class Range {
   constructor(yawSmall, yawLarge) {
-    this.yawSmall = yawSmall;
-    this.yawLarge = yawLarge;
+    // panellumの座標系に変換
+    this.yawSmall = Range.changeCoordinateForPannellum(yawSmall);
+    this.yawLarge = Range.changeCoordinateForPannellum(yawLarge);
+  }
+
+  static changeCoordinateForPannellum(angle) {
+    if (angle >= -180 && angle <= 0) {
+      // 第2、第3象限 (0度から-180度)
+      return angle;
+    } else if (angle > 0 && angle <= 180) {
+      // 第1、第4象限 (0度から180度)
+      return angle;
+    } else {
+      // 範囲外の値は正規化してから再度変換
+      let normalizedAngle = angle % 360;
+      if (normalizedAngle < -180) {
+        normalizedAngle += 360;
+      } else if (normalizedAngle > 180) {
+        normalizedAngle -= 360;
+      }
+      return Range.changeCoordinateForPannellum(normalizedAngle);
+    }
   }
 }
 function sleep(ms) {
@@ -59,46 +258,223 @@ function sleep(ms) {
 }
 
 // 画像の読み込みを監視して、読み込み完了後にhiddenMoveBtnを実行する関数
+// function waitForLoadAndExecute() {
+//   const interval = setInterval(() => {
+//     if (isLoadComplete) {
+//       clearInterval(interval);
+//       hiddenMoveBtn();
+//     }
+//   }, 100); // 100msごとにチェック
+// }
 function waitForLoadAndExecute() {
-  const interval = setInterval(() => {
-    if (isLoadComplete) {
-      clearInterval(interval);
-      hiddenMoveBtn();
-    }
-  }, 100); // 100msごとにチェック
+  return new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (isLoadComplete) {
+        clearInterval(interval);
+        hiddenMoveBtn();
+        resolve();
+      }
+    }, 100); // 100msごとにチェック
+  });
 }
-
 //画面の移動ボタンを消す 正常に消せた場合にはtrue 異常 or ボタンがない場合にfalse返却
 function hiddenMoveBtn() {
   //移動ボタンを全て非表示
-  const pnlmSceneDivs = document.querySelectorAll("div.pnlm-scene");
-  if (pnlmSceneDivs.length != 0) {
-    pnlmSceneDivs.forEach((div) => {
-      div.style.display = "none";
-    });
-    return true;
-  } else {
-    return false;
-  }
+  //デバッグ中
+  // const pnlmSceneDivs = document.querySelectorAll("div.pnlm-scene");
+  // if (pnlmSceneDivs.length != 0) {
+  //   pnlmSceneDivs.forEach((div) => {
+  //     div.style.display = "none";
+  //   });
+  //   return true;
+  // } else {
+  //   return false;
+  // }
+
+  return true;
 }
 async function addEventMoveBtn() {
   console.log("移動ボタンにリスナーを追加しました。");
-  await sleep(700);
+  await sleep(1000);
+  console.log("------------移動ボタン一覧------------");
+
   // //ぱねりうむの移動ボタンにリスナー追加
   document.querySelectorAll("div.pnlm-scene").forEach((div) => {
+    // divElementをここで定義する
+    const divElement = div;
+
+    // divElementの中からspan要素を探す
+    const spanElement = divElement.querySelector("span");
+
+    // spanElementが存在するか確認
+    if (spanElement) {
+      console.log(spanElement.textContent);
+    } else {
+      console.error("spanElementが見つかりません");
+    }
+
     div.addEventListener("click", async function () {
-      await sleep(1000);
-      console.log("clickした");
-      //画像の読み込み完了後に移動ボタンの非表示処理を行う関数
-      waitForLoadAndExecute();
+      if (ManageMoveRange.isProcessing) return;
+      ManageMoveRange.isProcessing = true;
+      console.log("処理を開始します", ManageMoveRange.isProcessing);
+      try {
+        await sleep(300);
+
+        // 戻っている場合には視点を真後ろを向くようにする
+        if (isReturn(document.querySelector(".pnlm-title-box").textContent)) {
+          viewer.setYaw(180);
+        }
+
+        // 画像の読み込み完了後に移動ボタンの非表示処理を行う関数
+        await waitForLoadAndExecute();
+
+        // 移動の設定
+        await ManageMoveRange.moveSetting(
+          document.querySelector(".pnlm-title-box").textContent
+        );
+      } catch (error) {
+        console.error("エラーが発生しました:", error);
+      } finally {
+        ManageMoveRange.isProcessing = false;
+        console.log("処理を終了します", ManageMoveRange.isProcessing);
+      }
     });
-    console.log("aaaa");
-    //移動ボタンが取得できるまで無限に繰り返す
-    while (!hiddenMoveBtn()) {}
   });
 }
+//戻っている場合にはtrueを返却
+
+function isReturn(now) {
+  console.log("prev", prevLocation_g, "now:", now);
+  const prevLetter = prevLocation_g.charAt(0);
+  const prevNumber = parseInt(prevLocation_g.substring(1));
+  const nowLetter = now.charAt(0);
+  const nowNumber = parseInt(now.substring(1));
+
+  // 文字が異なる場合の処理
+  if (prevLetter !== nowLetter) {
+    if (nowNumber === 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // 文字が同じ場合の処理
+  if (prevLocation_g < now) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 //矢印画像関係 ----------------------------------------------------------------
 
+//矢印画像の方向を移動する方向に補正する関数
+function adjustArrowImg() {
+  // console.log(ManageMoveRange.locations);
+  //どの移動ボタンに向くべきなのかを計算
+  //地点名から配列のインデックスを取得し、その地点の範囲を検索
+  // 対象の location のインデックスをすべて取得
+  let indices = [];
+  for (let i = 0; i < ManageMoveRange.locations.length; i++) {
+    if (ManageMoveRange.locations[i] === moveLocationByCursor) {
+      indices.push(i);
+    }
+  }
+
+  // インデックスに対応する ranges を取得
+  let ranges = indices.map((index) => ManageMoveRange.ranges[index]);
+
+  //moveLocation: hunsui
+  // [Range]
+  // 0
+  // :
+  // Range {yawSmall: -90, yawLarge: 0}
+  // length
+  // :
+  // 1
+  // [[Prototype]]
+  //ranges配列には2こ移動ボタンはあっても一つしか配列の要素がないのでoutBouds
+
+  // console.log(
+  //   "moveLocation:",
+  //   moveLocationByCursor,
+  //   ManageMoveRange.ranges,
+  //   ManageMoveRange.locations.indexOf(moveLocationByCursor)
+  // );
+  // console.log("ここです", range);
+  // console.log("movePosi:", movePosi);
+  //デバッグ
+  // console.log(ranges);
+  console.log("クリックすると", moveLocationByCursor, "に移動");
+  for (var i = 0; i < movePosi.length; i++) {
+    //移動ボタンの位置が特定できた場合
+    for (var j = 0; j < ranges.length; j++) {
+      // console.log(
+      //   "rangeSmall:rangeBig",
+      //   ranges[j].yawSmall,
+      //   ranges[j].yawLarge,
+      //   "移動ボタンの位置 pitch:yaw",
+      //   movePosi[i][0],
+      //   movePosi[i][1]
+      // );
+      if (
+        ranges[j].yawSmall <= movePosi[i][1] &&
+        ranges[j].yawLarge >= movePosi[i][1]
+      ) {
+        rotateArrow(movePosi[i][0], movePosi[i][1]);
+        return;
+      }
+    }
+  }
+  console.log("移動ボタンが正確に取得できませんでした。");
+}
+
+//画像を回転させる
+function rotateArrow(pitchMoveBtn, yawMoveBtn) {
+  // pitch_gとyaw_gはグローバル変数として定義されていると仮定します
+  // 向きの計算
+  var deltaX = yawMoveBtn - yaw_g;
+  var deltaY = pitchMoveBtn - pitch_g;
+
+  // 角度の計算（ラジアンから度に変換）
+  var angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+  // arrowButtonImgのCSSを更新して回転させる
+  var arrowButtonImg = document.querySelector("#arrowButtonImg");
+
+  // 要素が存在するかチェック
+  if (arrowButtonImg) {
+    //大きさも変更
+    const distance = calculateDistanceFromCenter(
+      pitch_g,
+      yaw_g,
+      centerPitch,
+      centerYaw
+    );
+
+    // 最大距離（スケールが0になる距離を適宜設定）
+    const maxDistance = 2; // ここでは適切な値を設定
+
+    // スケールを計算
+    const scale = scaleImageBasedOnDistance(distance, maxDistance);
+    // console.log("角度", (angle + 1) % 360);
+    // 要素の位置を中心に回転させる
+    if ((yaw_g >= 0 && yaw_g <= 90) || (yaw_g <= -90 && yaw_g >= -180)) {
+      // console.log("補正有効");
+      arrowButtonImg.style.transform = `rotate(${
+        180 - ((angle + 1) % 360)
+      }deg) scale(${scale - 0.1})`;
+    } else
+      arrowButtonImg.style.transform = `rotate(${(angle + 1) % 360}deg) scale(${
+        scale - 0.1
+      })`;
+  } else {
+    console.error(
+      "arrowButtonImg要素が見つかりません。クラス名や要素の存在を確認してください。"
+    );
+  }
+}
 function toCartesian(pitch, yaw) {
   // ラジアンに変換
   const toRadians = (angle) => angle * (Math.PI / 180);
@@ -134,11 +510,13 @@ function scaleImageBasedOnDistance(distance, maxDistance) {
 window.onload = async () => {
   //pannelumの読み込みに時間がかかるのでsleep関数ないどボタンの取得が毎回0になる
   await sleep(100);
-  hiddenMoveBtn();
+  //移動ボタンの消去
+  waitForLoadAndExecute();
+  //移動ボタンにリスナーの追加
   addEventMoveBtn();
 
-  //移動の範囲指定の設定を適用
-  ManageMoveRange.moveSetting();
+  //移動の範囲指定の設定を適用　(引数はデフォルトで表示したい場所を引数に入れてください)
+  ManageMoveRange.moveSetting("A0");
 
   var panoramaDiv = document.getElementById("panorama");
 
@@ -152,14 +530,24 @@ window.onload = async () => {
 
     // マウスが離されたとき
     panoramaDiv.addEventListener("mouseup", function (event) {
+      if (ManageMoveRange.isProcessing) {
+        console.log("処理中です");
+        return;
+      }
       if (!isDragging) {
         console.log("クリック");
 
         // パノラマ内のクリックにのみ反応
         if (isCursorInPanorama(cursorX_g, cursorY_g)) {
-          console.log(ManageMoveRange.getMovePlace(yaw_g));
+          //移動の処理
+          console.log(
+            "クリックされた場所では",
+            ManageMoveRange.getMovePlace(yaw_g),
+            "に移動します。"
+          );
           var isExistLocation = move(ManageMoveRange.getMovePlace(yaw_g));
           console.log(isExistLocation);
+
           //移動地点にて再度移動ボタンのリスナー追加 + ボタン非表示
           addEventMoveBtn();
           //移動先が設定されていない場合
@@ -176,24 +564,31 @@ window.onload = async () => {
     });
     //カーソルに画像が追従する機能の実装
     panoramaDiv.addEventListener("mousemove", function (event) {
+      //現在のカーソルにおける移動先を計算
+      moveLocationByCursor = ManageMoveRange.getMovePlace(yaw_g);
+      // console.log("moveLocation", moveLocationByCursor);
+      //移動先の方向に矢印画像を回転
+      adjustArrowImg();
+
+      // console.log("pitch", pitch_g, "yaw", yaw_g);
       //カーソルと360度写真の中心からの距離によって画像の大きさをリサイズ
       // 基準点からカーソルまでの距離を計算
-      const distance = calculateDistanceFromCenter(
-        pitch_g,
-        yaw_g,
-        centerPitch,
-        centerYaw
-      );
+      // const distance = calculateDistanceFromCenter(
+      //   pitch_g,
+      //   yaw_g,
+      //   centerPitch,
+      //   centerYaw
+      // );
 
-      // 最大距離（スケールが0になる距離を適宜設定）
-      const maxDistance = 2; // ここでは適切な値を設定
+      // // 最大距離（スケールが0になる距離を適宜設定）
+      // const maxDistance = 2; // ここでは適切な値を設定
 
-      // スケールを計算
-      const scale = scaleImageBasedOnDistance(distance, maxDistance);
+      // // スケールを計算
+      // const scale = scaleImageBasedOnDistance(distance, maxDistance);
 
-      // 画像のスケールを適用（例としてCSSで適用）
-      var arrowImg = document.getElementById("arrowButtonImg");
-      arrowImg.style.transform = `scale(${scale - 0.1})`;
+      // // 画像のスケールを適用（例としてCSSで適用）
+      // var arrowImg = document.getElementById("arrowButtonImg");
+      // arrowImg.style.transform = `scale(${scale - 0.1})`;
 
       isDragging = true;
       //panoramaDivを起点にして、相対的な座標を取得
@@ -1602,18 +1997,18 @@ window.pannellum = (function (E, g, p) {
         var f = Q(a);
         if (b.hotSpotDebug) {
           var n = ta(a);
-          // console.log(
-          //   "Pitch: " +
-          //     n[0] +
-          //     ", Yaw: " +
-          //     n[1] +
-          //     ", Center Pitch: " +
-          //     b.pitch +
-          //     ", Center Yaw: " +
-          //     b.yaw +
-          //     ", HFOV: " +
-          //     b.hfov
-          // );
+          console.log(
+            "Pitch: " +
+              n[0] +
+              ", Yaw: " +
+              n[1] +
+              ", Center Pitch: " +
+              b.pitch +
+              ", Center Yaw: " +
+              b.yaw +
+              ", HFOV: " +
+              b.hfov
+          );
         }
         t();
         Da();
@@ -2280,6 +2675,16 @@ window.pannellum = (function (E, g, p) {
         }
     }
     function Ca(a) {
+      // movePosiに同じpitchとyawの組み合わせが存在するかをチェック
+      var exists = movePosi.some(function (pos) {
+        return pos[0] === a.pitch && pos[1] === a.yaw;
+      });
+
+      // 存在しない場合のみpush
+      if (!exists) {
+        movePosi.push([a.pitch, a.yaw]);
+      }
+      // console.log(movePosi);
       var f = Math.sin((a.pitch * Math.PI) / 180),
         c = Math.cos((a.pitch * Math.PI) / 180),
         d = Math.sin((b.pitch * Math.PI) / 180),
@@ -2305,6 +2710,7 @@ window.pannellum = (function (E, g, p) {
           c = Math.sin((b.roll * Math.PI) / 180),
           d = Math.cos((b.roll * Math.PI) / 180),
           f = [f[0] * d - f[1] * c, f[0] * c + f[1] * d];
+
         f[0] += (p - a.div.offsetWidth) / 2;
         f[1] += (m - a.div.offsetHeight) / 2;
         p =
@@ -2921,28 +3327,45 @@ window.pannellum = (function (E, g, p) {
     this.getYaw = function () {
       return ((b.yaw + 540) % 360) - 180;
     };
+    //関数書き換えたから動かんかったらすまん
+    //元の関数
+    // function (a, c, d, e) {
+    //   console.log("よびだした");
+    //   N = Date.now();
+    //   if (1e-6 >= Math.abs(a - b.yaw))
+    //     return "function" == typeof d && d(e), this;
+    //   c = c == p ? 1e3 : Number(c);
+    //   a = ((a + 180) % 360) - 180;
+    //   c
+    //     ? (180 < b.yaw - a ? (a += 360) : 180 < a - b.yaw && (a -= 360),
+    //       (O.yaw = {
+    //         startTime: Date.now(),
+    //         startPosition: b.yaw,
+    //         endPosition: a,
+    //         duration: c,
+    //       }),
+    //       "function" == typeof d &&
+    //         setTimeout(function () {
+    //           d(e);
+    //         }, c))
+    //     : (b.yaw = a);
+    //   F();
+    //   return this;
+    // };
     this.setYaw = function (a, c, d, e) {
+      console.log("よびだした");
       N = Date.now();
       if (1e-6 >= Math.abs(a - b.yaw))
         return "function" == typeof d && d(e), this;
-      c = c == p ? 1e3 : Number(c);
-      a = ((a + 180) % 360) - 180;
-      c
-        ? (180 < b.yaw - a ? (a += 360) : 180 < a - b.yaw && (a -= 360),
-          (O.yaw = {
-            startTime: Date.now(),
-            startPosition: b.yaw,
-            endPosition: a,
-            duration: c,
-          }),
-          "function" == typeof d &&
-            setTimeout(function () {
-              d(e);
-            }, c))
-        : (b.yaw = a);
+      // a = ((a + 180) % 360) - 180;
+      b.yaw = ((a + 180) % 360) - 180;
+      if ("function" == typeof d) {
+        d(e);
+      }
       F();
       return this;
     };
+
     this.getYawBounds = function () {
       return [b.minYaw, b.maxYaw];
     };
@@ -3177,3 +3600,221 @@ window.pannellum = (function (E, g, p) {
     },
   };
 })(window, document);
+
+// //map-script.js-------------------------------------------------------------------------
+// window.onload = () => {
+//   pannellum.viewer("panorama", {
+//     default: {
+//       firstScene: "A0",
+//       sceneFadeDuration: 1000,
+//     },
+//     scenes: {
+//       A0: {
+//         /*写真のタグ(ID)*/
+//         title: "A0" /*表示する写真名(建物名)など必要あれば記入)*/,
+//         type: "equirectangular", //表示方式,いじる必要なし
+//         panorama: "image/360pic/A0.jpg" /*表示する写真のパス*/,
+//         autoLoad: true /*自動読み込み*/,
+//         hotSpots: [
+//           {
+//             /*移動ボタン*/ pitch: 0 /*上下座標,0が真正面*/,
+//             yaw: 0 /*左右座標,時計回り360度方式で90で右,270で左*/,
+//             type: "scene",
+//             text: "A1" /*行き先。ボタンにカーソルで表示*/,
+//             sceneId: "A1" /*行き先の写真のタグ(ID)*/,
+//           },
+//           // {
+//           //   /*移動ボタン*/ pitch: 0 /*上下座標,0が真正面*/,
+//           //   yaw: 180 /*左右座標,時計回り360度方式で90で右,270で左*/,
+//           //   type: "scene",
+//           //   text: "hunsui" /*行き先。ボタンにカーソルで表示*/,
+//           //   sceneId: "hunsui" /*行き先の写真のタグ(ID)*/,
+//           // },
+//           // {
+//           //   /*インフォメーション*/ pitch: 10,
+//           //   yaw: 0,
+//           //   type: "info",
+//           //   text: "１号館",
+//           //   URL: "https://wireless.ryukoku.ac.jp/in/map/s-1.pdf",
+//           // },
+//         ],
+//       },
+
+//       A1: {
+//         title: "A1",
+//         type: "equirectangular",
+//         panorama: "image/360pic/A1.jpg",
+//         hotSpots: [
+//           {
+//             pitch: 0,
+//             yaw: 0,
+//             type: "scene",
+//             text: "A2",
+//             sceneId: "A2",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//           {
+//             pitch: 0,
+//             yaw: 180,
+//             type: "scene",
+//             text: "A0",
+//             sceneId: "A0",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//         ],
+//       },
+//       A2: {
+//         title: "A2",
+//         type: "equirectangular",
+//         panorama: "image/360pic/A2.jpg",
+//         hotSpots: [
+//           {
+//             pitch: 0,
+//             yaw: 0,
+//             type: "scene",
+//             text: "A3",
+//             sceneId: "A3",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//           {
+//             pitch: 0,
+//             yaw: 180,
+//             type: "scene",
+//             text: "A1",
+//             sceneId: "A1",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//         ],
+//       },
+//       A3: {
+//         title: "A3",
+//         type: "equirectangular",
+//         panorama: "image/360pic/A3.jpg",
+//         hotSpots: [
+//           {
+//             pitch: 0,
+//             yaw: 0,
+//             type: "scene",
+//             text: "A4",
+//             sceneId: "A4",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//           {
+//             pitch: 0,
+//             yaw: 180,
+//             type: "scene",
+//             text: "A2",
+//             sceneId: "A2",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//         ],
+//       },
+//       A4: {
+//         title: "A4",
+//         type: "equirectangular",
+//         panorama: "image/360pic/A4.jpg",
+//         hotSpots: [
+//           {
+//             pitch: 0,
+//             yaw: 0,
+//             type: "scene",
+//             text: "A5",
+//             sceneId: "A5",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//           {
+//             pitch: 0,
+//             yaw: 180,
+//             type: "scene",
+//             text: "A3",
+//             sceneId: "A3",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//         ],
+//       },
+//       A5: {
+//         title: "A5",
+//         type: "equirectangular",
+//         panorama: "image/360pic/A5.jpg",
+//         hotSpots: [
+//           {
+//             pitch: 0,
+//             yaw: 0,
+//             type: "scene",
+//             text: "A6",
+//             sceneId: "A6",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//           {
+//             pitch: 0,
+//             yaw: 180,
+//             type: "scene",
+//             text: "A4",
+//             sceneId: "A4",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//         ],
+//       },
+//       A6: {
+//         title: "A6",
+//         type: "equirectangular",
+//         panorama: "image/360pic/A6.jpg",
+//         hotSpots: [
+//           {
+//             pitch: 0,
+//             yaw: 45,
+//             type: "scene",
+//             text: "B0",
+//             sceneId: "B0",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//           {
+//             pitch: 0,
+//             yaw: 180,
+//             type: "scene",
+//             text: "A5",
+//             sceneId: "A5",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//         ],
+//       },
+//       B0: {
+//         title: "B0",
+//         type: "equirectangular",
+//         panorama: "image/360pic/B0.jpg",
+//         hotSpots: [
+//           {
+//             pitch: 0,
+//             yaw: 90,
+//             type: "scene",
+//             text: "B1",
+//             sceneId: "B1",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//           {
+//             pitch: 0,
+//             yaw: -135,
+//             type: "scene",
+//             text: "A6",
+//             sceneId: "A6",
+//             targetYaw: 0,
+//             targetPitch: 0,
+//           },
+//         ],
+//       },
+//     },
+//   });
+// };

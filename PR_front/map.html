@@ -1,101 +1,109 @@
 <!DOCTYPE html>
 <html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Street Ryu</title>
-    <link rel="icon" href="image/logos/street_ryu.png">
+    <link rel="icon" href="image/logos/street_ryu.png" />
     <link rel="stylesheet" href="pannellum/pannellum.css" />
-    <link rel="stylesheet" href="map-style.css">
+    <link rel="stylesheet" href="map-style.css" />
     <script src="pannellum/pannellum.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bungee&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-
-</head>
-
-<body>
+  <body>
     <div id="panorama"></div>
     <div class="menu">
-        <img src="image/logos/menu-icon.png" alt="Menu" onclick="toggleMenu()">
-        <div class="menu-content" id="menuContent">
-            <div class="header">
-                <div class="close-btn" onclick="toggleMenu()">
-                    <img src="image/logos/menu-icon-white.png" alt="Close">
-                </div>
-                <p class="logo-text">STREET RYU</p>
-            </div>
-            <a href="index.html" class="top-page">TOP PAGE</a>
-            <div class="menu-section">
-                <h3 onclick="toggleSection('buildings')">
-                    Buildings <span class="arrow">▸</span>
-                </h3>
-                <div id="buildings" class="submenu">
-                    <a href="#">1号館</a>
-                    <a href="#">2号館</a>
-                    <a href="#">3号館</a>
-                    <a href="#">4号館</a>
-                    <a href="#">5号館</a>
-                    <a href="#">6号館</a>
-                    <a href="#">7号館</a>
-                    <a href="#">8号館</a>
-                    <a href="#">9号館</a>
-                    <a href="#">第1実験棟</a>
-                    <a href="#">第2実験棟</a>
-                </div>
-            </div>
-            <div class="menu-section">
-                <h3 onclick="toggleSection('restaurants')">
-                    Restaurants <span class="arrow">▸</span>
-                </h3>
-                <div id="restaurants" class="submenu">
-                    <a href="#">青志館</a>
-                    <a href="#">青雲館</a>
-                </div>
-            </div>
-            <div class="menu-section">
-                <h3 onclick="toggleSection('convenience')">
-                    Convenience store <span class="arrow">▸</span>
-                </h3>
-                <div id="convenience" class="submenu">
-                    <a href="#">瀬田ショップSMYLE</a>
-                    <a href="#">ファミリーマート</a>
-                </div>
-            </div>
-            <div class="menu-section">
-                <h3 onclick="toggleSection('sports')">
-                    Sports <span class="arrow">▸</span>
-                </h3>
-                <div id="sports" class="submenu">
-                    <a href="#">体育館</a>
-                    <a href="#">SETA DOME</a>
-                    <a href="#">多目的グラウンド</a>
-                    <a href="#">野球場</a>
-                    <a href="#">テニスコート</a>
-                </div>
-            </div>
-            <div class="menu-section">
-                <h3 onclick="toggleSection('others')">
-                    Other buildings <span class="arrow">▸</span>
-                </h3>
-                <div id="others" class="submenu">
-                    <a href="#">図書館</a>
-                    <a href="#">学生交流会館</a>
-                    <a href="#">智光館</a>
-                    <a href="#">樹心館</a>
-                    <a href="#">Global Lounge & Kitchen</a>
-                    <a href="#">RECホール</a>
-                    <a href="#">HRC棟</a>
-                    <a href="#">バス停</a>
-                    <a href="#">駐輪場</a>
-                </div>
-            </div>
+      <img src="image/logos/menu-icon.png" alt="Menu" onclick="toggleMenu()" />
+      <div class="menu-content" id="menuContent">
+        <div class="header">
+          <div class="close-btn" onclick="toggleMenu()">
+            <img src="image/logos/menu-icon-white.png" alt="Close" />
+          </div>
+          <p class="logo-text">STREET RYU</p>
         </div>
+        <a href="index.html" class="top-page">TOP PAGE</a>
+        <div class="menu-section">
+          <h3 onclick="toggleSection('buildings')">
+            Buildings <span class="arrow">▸</span>
+          </h3>
+          <div id="buildings" class="submenu">
+            <a href="#">1号館</a>
+            <a href="#">2号館</a>
+            <a href="#">3号館</a>
+            <a href="#">4号館</a>
+            <a href="#">5号館</a>
+            <a href="#">6号館</a>
+            <a href="#">7号館</a>
+            <a href="#">8号館</a>
+            <a href="#">9号館</a>
+            <a href="#">第1実験棟</a>
+            <a href="#">第2実験棟</a>
+          </div>
+        </div>
+        <div class="menu-section">
+          <h3 onclick="toggleSection('restaurants')">
+            Restaurants <span class="arrow">▸</span>
+          </h3>
+          <div id="restaurants" class="submenu">
+            <a href="#">青志館</a>
+            <a href="#">青雲館</a>
+          </div>
+        </div>
+        <div class="menu-section">
+          <h3 onclick="toggleSection('convenience')">
+            Convenience store <span class="arrow">▸</span>
+          </h3>
+          <div id="convenience" class="submenu">
+            <a href="#">瀬田ショップSMYLE</a>
+            <a href="#">ファミリーマート</a>
+          </div>
+        </div>
+        <div class="menu-section">
+          <h3 onclick="toggleSection('sports')">
+            Sports <span class="arrow">▸</span>
+          </h3>
+          <div id="sports" class="submenu">
+            <a href="#">体育館</a>
+            <a href="#">SETA DOME</a>
+            <a href="#">多目的グラウンド</a>
+            <a href="#">野球場</a>
+            <a href="#">テニスコート</a>
+          </div>
+        </div>
+        <div class="menu-section">
+          <h3 onclick="toggleSection('others')">
+            Other buildings <span class="arrow">▸</span>
+          </h3>
+          <div id="others" class="submenu">
+            <a href="#">図書館</a>
+            <a href="#">学生交流会館</a>
+            <a href="#">智光館</a>
+            <a href="#">樹心館</a>
+            <a href="#">Global Lounge & Kitchen</a>
+            <a href="#">RECホール</a>
+            <a href="#">HRC棟</a>
+            <a href="#">バス停</a>
+            <a href="#">駐輪場</a>
+          </div>
+        </div>
+      </div>
     </div>
     <img id="arrowButtonImg" src="image/arrow.png" alt="矢印" />
     <script src="map-script.js"></script>
-</body>
-
+  </body>
 </html>
