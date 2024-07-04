@@ -335,8 +335,8 @@ async function addEventMoveBtn() {
       } catch (error) {
         console.error("エラーが発生しました:", error);
       } finally {
-        ManageMoveRange.isProcessing = false;
         console.log("処理を終了します", ManageMoveRange.isProcessing);
+        ManageMoveRange.isProcessing = false;
       }
     });
   });

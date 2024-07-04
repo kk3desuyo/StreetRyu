@@ -18,20 +18,6 @@
           text: "A1" /*行き先。ボタンにカーソルで表示*/,
           sceneId: "A1" /*行き先の写真のタグ(ID)*/,
         },
-        // {
-        //   /*移動ボタン*/ pitch: 0 /*上下座標,0が真正面*/,
-        //   yaw: 180 /*左右座標,時計回り360度方式で90で右,270で左*/,
-        //   type: "scene",
-        //   text: "hunsui" /*行き先。ボタンにカーソルで表示*/,
-        //   sceneId: "hunsui" /*行き先の写真のタグ(ID)*/,
-        // },
-        // {
-        //   /*インフォメーション*/ pitch: 10,
-        //   yaw: 0,
-        //   type: "info",
-        //   text: "１号館",
-        //   URL: "https://wireless.ryukoku.ac.jp/in/map/s-1.pdf",
-        // },
       ],
     },
 
@@ -39,6 +25,7 @@
       title: "A1",
       type: "equirectangular",
       panorama: "image/360pic/A1.jpg",
+      autoLoad: true /*自動読み込み*/,
       hotSpots: [
         {
           pitch: 0,
@@ -251,3 +238,15 @@ document.addEventListener("click", function (event) {
     overlay.style.display = "none";
   }
 });
+function toggleSection(sectionId) {
+  var section = document.getElementById(sectionId);
+  var arrow = section.previousElementSibling.querySelector(".arrow"); // 矢印要素を取得
+  if (section.style.height !== "0px") {
+    section.style.height = "0px";
+    arrow.textContent = "▸"; // メニューが閉じるとき矢印を▷に変更
+  } else {
+    var sectionHeight = section.scrollHeight + "px";
+    section.style.height = sectionHeight;
+    arrow.textContent = "▾"; // メニューが開くとき矢印を▽に変更
+  }
+}
