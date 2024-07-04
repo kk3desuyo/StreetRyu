@@ -281,17 +281,15 @@ function waitForLoadAndExecute() {
 function hiddenMoveBtn() {
   //移動ボタンを全て非表示
   //デバッグ中
-  // const pnlmSceneDivs = document.querySelectorAll("div.pnlm-scene");
-  // if (pnlmSceneDivs.length != 0) {
-  //   pnlmSceneDivs.forEach((div) => {
-  //     div.style.display = "none";
-  //   });
-  //   return true;
-  // } else {
-  //   return false;
-  // }
-
-  return true;
+  const pnlmSceneDivs = document.querySelectorAll("div.pnlm-scene");
+  if (pnlmSceneDivs.length != 0) {
+    pnlmSceneDivs.forEach((div) => {
+      div.style.display = "none";
+    });
+    return true;
+  } else {
+    return false;
+  }
 }
 async function addEventMoveBtn() {
   console.log("移動ボタンにリスナーを追加しました。");
