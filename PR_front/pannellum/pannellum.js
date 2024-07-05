@@ -27,6 +27,9 @@ var moveLocationByCursor;
 //現在の地点の移動ボタン一覧
 var movePosi = [];
 
+//デバッグよう
+var count = 1;
+
 //移動ボタンの範囲を管理するためのくらす
 class ManageMoveRange {
   static JSONFILEPATH = "./positionInfos.json";
@@ -52,26 +55,13 @@ class ManageMoveRange {
 
   //現在の地点を取得してその地点に対する範囲と移動先のデータを取得
   static getPosiInfoByLocation(location) {
-    console.log(
-      "これまでの情報を初期化しました。",
-      this.ranges,
-      this.locations
-    );
-    console.log(location, "を検索します。");
-    console.log(this.posiInfos);
     var nowLocationInfo = this.posiInfos.positions.find(
       (position) => position.positionId === location
     );
     if (typeof nowLocationInfo === "undefined") {
       return;
     }
-    console.log(
-      "検索地点",
-      location,
-      "locationINFO:",
-      nowLocationInfo,
-      "JSONのデータが正しくありません"
-    );
+
     //地点の格納
     this.locations = nowLocationInfo.moveSets.locations;
 
@@ -82,7 +72,6 @@ class ManageMoveRange {
     var countProcessRange = 0;
     // console.log("座標情報を取得しました:", array, this.locations);
     for (let i = 0; i < array.length; i += 2) {
-      console.log(i, this.locations);
       var splitedRanges = this.splitRange(array[i], array[i + 1]);
 
       countProcessRange++;
@@ -185,6 +174,7 @@ class ManageMoveRange {
   static async moveSetting(location) {
     return new Promise((resolve, reject) => {
       try {
+        console.log("移動設定開始");
         prevLocation_g = location;
         // 初期化
         this.ranges = [];
@@ -208,6 +198,8 @@ class ManageMoveRange {
       } catch (error) {
         // エラーハンドリング
         reject(error);
+      } finally {
+        console.log("正常に終了しました。");
       }
     });
   }
@@ -312,7 +304,6 @@ async function addEventMoveBtn() {
     }
 
     div.addEventListener("click", async function () {
-      if (ManageMoveRange.isProcessing) return;
       ManageMoveRange.isProcessing = true;
       console.log("処理を開始します", ManageMoveRange.isProcessing);
       try {
@@ -325,11 +316,12 @@ async function addEventMoveBtn() {
 
         // 画像の読み込み完了後に移動ボタンの非表示処理を行う関数
         await waitForLoadAndExecute();
-
+        console.log("ボタンの非表示完了");
         // 移動の設定
         await ManageMoveRange.moveSetting(
           document.querySelector(".pnlm-title-box").textContent
         );
+        console.log("移動の設定情報反映完了");
       } catch (error) {
         console.error("エラーが発生しました:", error);
       } finally {
@@ -505,6 +497,49 @@ function scaleImageBasedOnDistance(distance, maxDistance) {
   return scale;
 }
 
+async function handleMouseUp() {
+  console.log(isDragging);
+  var panoramaDiv = document.getElementById("panorama");
+
+  panoramaDiv.removeEventListener("mouseup", handleMouseUp);
+
+  try {
+    if (!isDragging) {
+      console.log("クリック");
+
+      // パノラマ内のクリックにのみ反応
+      if (isCursorInPanorama(cursorX_g, cursorY_g)) {
+        //移動の処理
+        console.log(
+          "クリックされた場所では",
+          ManageMoveRange.getMovePlace(yaw_g),
+          "に移動します。"
+        );
+        var isExistLocation = move(ManageMoveRange.getMovePlace(yaw_g));
+        console.log(isExistLocation);
+
+        //移動地点にて再度移動ボタンのリスナー追加 + ボタン非表示
+        await addEventMoveBtn();
+        //移動先が設定されていない場合
+        if (!isExistLocation) {
+          alert("移動先が設定されていません");
+        }
+      } else {
+        console.log("範囲外でのクリック");
+      }
+    } else {
+      console.log("ドラッグ中のためクリックイベントを無視");
+    }
+    isDragging = false;
+  } catch (error) {
+    console.error("エラーが発生しました:", error);
+  } finally {
+    ManageMoveRange.isProcessing = false;
+    panoramaDiv.addEventListener("mouseup", handleMouseUp);
+  }
+}
+//どっラッグのフラグ
+let isDragging = false;
 window.onload = async () => {
   //pannelumの読み込みに時間がかかるのでsleep関数ないどボタンの取得が毎回0になる
   await sleep(100);
@@ -519,74 +554,20 @@ window.onload = async () => {
   var panoramaDiv = document.getElementById("panorama");
 
   if (panoramaDiv) {
-    let isDragging = false;
-
     // マウスが押されたとき
     panoramaDiv.addEventListener("mousedown", function (event) {
       isDragging = false;
     });
 
     // マウスが離されたとき
-    panoramaDiv.addEventListener("mouseup", function (event) {
-      if (ManageMoveRange.isProcessing) {
-        console.log("処理中です");
-        return;
-      }
-      if (!isDragging) {
-        console.log("クリック");
-
-        // パノラマ内のクリックにのみ反応
-        if (isCursorInPanorama(cursorX_g, cursorY_g)) {
-          //移動の処理
-          console.log(
-            "クリックされた場所では",
-            ManageMoveRange.getMovePlace(yaw_g),
-            "に移動します。"
-          );
-          var isExistLocation = move(ManageMoveRange.getMovePlace(yaw_g));
-          console.log(isExistLocation);
-
-          //移動地点にて再度移動ボタンのリスナー追加 + ボタン非表示
-          addEventMoveBtn();
-          //移動先が設定されていない場合
-          if (!isExistLocation) {
-            alert("移動先が設定されていません");
-          }
-        } else {
-          console.log("範囲外でのクリック");
-        }
-      } else {
-        console.log("ドラッグ中のためクリックイベントを無視");
-      }
-      isDragging = false;
-    });
+    panoramaDiv.addEventListener("mouseup", handleMouseUp());
     //カーソルに画像が追従する機能の実装
     panoramaDiv.addEventListener("mousemove", function (event) {
       //現在のカーソルにおける移動先を計算
       moveLocationByCursor = ManageMoveRange.getMovePlace(yaw_g);
-      // console.log("moveLocation", moveLocationByCursor);
+
       //移動先の方向に矢印画像を回転
       adjustArrowImg();
-
-      // console.log("pitch", pitch_g, "yaw", yaw_g);
-      //カーソルと360度写真の中心からの距離によって画像の大きさをリサイズ
-      // 基準点からカーソルまでの距離を計算
-      // const distance = calculateDistanceFromCenter(
-      //   pitch_g,
-      //   yaw_g,
-      //   centerPitch,
-      //   centerYaw
-      // );
-
-      // // 最大距離（スケールが0になる距離を適宜設定）
-      // const maxDistance = 2; // ここでは適切な値を設定
-
-      // // スケールを計算
-      // const scale = scaleImageBasedOnDistance(distance, maxDistance);
-
-      // // 画像のスケールを適用（例としてCSSで適用）
-      // var arrowImg = document.getElementById("arrowButtonImg");
-      // arrowImg.style.transform = `scale(${scale - 0.1})`;
 
       isDragging = true;
       //panoramaDivを起点にして、相対的な座標を取得
@@ -626,7 +607,8 @@ window.onload = async () => {
   //panellumのフレーム内にある場合にカーソルに矢印を表示する
 };
 // 地点を移動できた場合には true、失敗時には false を返却
-function move(location) {
+async function move(location) {
+  console.log("移動の処理を開始します");
   console.log(location, "のボタンを検索します。");
   // 元々の移動ボタンを取得
   const pnlmSceneDivs = document.querySelectorAll("div.pnlm-scene");
@@ -646,7 +628,11 @@ function move(location) {
       if (span.textContent === location) {
         // 擬似的に該当の移動ボタンをクリックする
         div.click();
-        console.log("クリックします");
+        await sleep(1000);
+        console.log(
+          document.querySelector(".pnlm-title-box").textContent,
+          "に移動しました。"
+        );
         return true;
       }
     }
@@ -2849,6 +2835,30 @@ window.pannellum = (function (E, g, p) {
       a &&
         (c ? (b.title = c) : delete b.title,
         d ? (b.author = d) : delete b.author);
+      // var img = document.querySelector("canvas");
+      // var context = canvas.getContext("2d");
+
+      // img.src = "image/360pic/A" + count + " .jpg";
+      // img.onload = function () {
+      //   context.drawImage(img, 0, 0);
+      // };
+      // preloadNextImage();
+    }
+    function preloadNextImage() {
+      const nextImageUrl = getNextImageUrl(); // 次の画像のURLを取得する関数
+      const img = new Image();
+      img.src = nextImageUrl;
+      img.onload = function () {
+        console.log("次の画像がプリロードされました。");
+      };
+      count++;
+    }
+
+    function getNextImageUrl() {
+      console.log("image/360pic/A" + count + ".jpg");
+      // ロジックに基づいて次の画像のURLを決定する
+      // ここでは単純にサンプルURLを返す
+      return "image/360pic/A" + count + ".jpg";
     }
     function h() {
       if (G && !Na)

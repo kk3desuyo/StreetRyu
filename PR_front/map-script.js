@@ -212,19 +212,6 @@ function toggleMenu() {
   }
 }
 
-function toggleSection(sectionId) {
-  var section = document.getElementById(sectionId);
-  var arrow = section.previousElementSibling.querySelector(".arrow"); // 矢印要素を取得
-  if (section.style.height !== "0px") {
-    section.style.height = "0px";
-    arrow.textContent = "▸"; // メニューが閉じるとき矢印を▷に変更
-  } else {
-    var sectionHeight = section.scrollHeight + "px";
-    section.style.height = sectionHeight;
-    arrow.textContent = "▾"; // メニューが開くとき矢印を▽に変更
-  }
-}
-
 document.addEventListener("click", function (event) {
   var menu = document.getElementById("menuContent");
   var overlay = document.querySelector(".overlay");
