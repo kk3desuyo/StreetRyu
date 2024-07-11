@@ -163,3 +163,81 @@
     -ms-overflow-style: none; /* IEおよびEdgeでスクロールバーを非表示に */
     scrollbar-width: none; /* Firefoxでスクロールバーを非表示に */
 }
+
+/* ここから作成始め */
+.map_window {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+    cursor: pointer;
+}
+.map_window img {
+    width: 80px;
+    height: 70.5px;
+}
+
+/* -- a.overlay-zoombox -------------------------------------------------------------------------------------------- */
+
+a.overlay-zoombox {
+	display: inline-block; /* これは必須です */
+}
+
+a.overlay-zoombox:hover {
+	opacity: 0.7;
+}
+
+
+
+
+/* -- span.loading -------------------------------------------------------------------------------------------- */
+
+span.loading {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	border-top: 5px solid rgba( 0, 0, 0, 0.5 );
+	border-right: 5px solid rgba( 0, 0, 0, 0.5 );
+	border-bottom: 5px solid rgba( 0, 0, 0, 0.5 );
+	border-left: 5px solid #ffffff;
+	-webkit-transform: translateZ( 0 );
+	-ms-transform: translateZ( 0 );
+	transform: translateZ( 0 );
+	-webkit-animation: load-circle 1.0s linear infinite;
+	animation: load-circle 1.0s linear infinite;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -30px;
+	margin-left: -30px;
+}
+
+@-webkit-keyframes load-circle {
+	0%{
+		-webkit-transform: rotate( 0deg );
+		transform: rotate( 0deg );
+	}
+	100%{
+		-webkit-transform: rotate( 360deg );
+		transform: rotate( 360deg );
+	}
+}
+
+@keyframes load-circle {
+	0%{
+		-webkit-transform: rotate( 0deg );
+		transform: rotate( 0deg );
+	}
+	100%{
+		-webkit-transform: rotate( 360deg );
+		transform: rotate( 360deg );
+	}
+}
+
+
+
+
+
+
+
+
