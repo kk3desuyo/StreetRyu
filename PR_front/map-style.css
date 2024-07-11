@@ -1,167 +1,162 @@
 @charset "utf-8";
 
 #panorama {
-    width: 100vw;   /* ビューポートの幅全体を使用 */
-    height: 100vh;  /* ビューポートの高さ全体を使用 */
-    position: fixed; /* 必要に応じて調整 */
-    top: 0vh;
-    left: 0;
-    z-index: 0; /* 他の要素が前面に来るように調整 */
+  width: 100vw; /* ビューポートの幅全体を使用 */
+  height: 100vh; /* ビューポートの高さ全体を使用 */
+  position: fixed; /* 必要に応じて調整 */
+  top: 0vh;
+  left: 0;
+  z-index: 0; /* 他の要素が前面に来るように調整 */
 }
 
 .menu {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1000;
-    cursor: pointer;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  cursor: pointer;
 }
 
 .menu img {
-    width: 35px; /* メニューアイコンの幅 */
-    height: 40px; /* メニューアイコンの高さ */
+  width: 35px; /* メニューアイコンの幅 */
+  height: 40px; /* メニューアイコンの高さ */
 }
 
 .close-btn img {
-    width: 20px; /* メニューアイコンの幅 */
-    height: 20px; /* メニューアイコンの高さ */
+  width: 20px; /* メニューアイコンの幅 */
+  height: 20px; /* メニューアイコンの高さ */
 }
 
 .close-btn {
-    
-    margin-right: 30px; /* ロゴとの間隔 */
+  margin-right: 30px; /* ロゴとの間隔 */
 }
 
 .menu-content {
-    display: block;
-    position: fixed;
-    left: 0px; /* 左端から表示 */
-    top: 0;
-    height: 100%;
-    width: 250px; /* メニューの幅を調整 */
-    background-color: rgb(230, 0, 18);
-    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.5); /* 影の方向を左側に */
-    transform: translateX(-100%); /* 左に隠れるように */
-    transition: transform 0.65s ease;
-    font-family: 'Arial', sans-serif;
-    padding-top: 0;
-    overflow-y: auto; /* 縦スクロールを有効に */
+  display: block;
+  position: fixed;
+  left: 0px; /* 左端から表示 */
+  top: 0;
+  height: 100%;
+  width: 250px; /* メニューの幅を調整 */
+  background-color: rgb(230, 0, 18);
+  box-shadow: 5px 0 10px rgba(0, 0, 0, 0.5); /* 影の方向を左側に */
+  transform: translateX(-100%); /* 左に隠れるように */
+  transition: transform 0.65s ease;
+  font-family: "Arial", sans-serif;
+  padding-top: 0;
+  overflow-y: auto; /* 縦スクロールを有効に */
 }
 
-
 .menu-content a {
-    display: block;
-    color: rgb(255, 255, 255);
-    padding: 10px;
-    text-decoration: none;
-    font-size: 18px;
+  display: block;
+  color: rgb(255, 255, 255);
+  padding: 10px;
+  text-decoration: none;
+  font-size: 18px;
 }
 
 .menu-content a.top-page {
-    margin-bottom: 45px; /* 'TOP PAGE' と次のセクション間に20pxのマージンを設定 */
-    font-family: 'Bungee', sans-serif;
-    display: block;
-    color: white;
-    padding: 4px;
-    text-decoration: none;
-    font-size: 18px;
-    background-color: rgb(200, 0, 0); /* 背景色を変更する場合 */
+  margin-bottom: 45px; /* 'TOP PAGE' と次のセクション間に20pxのマージンを設定 */
+  font-family: "Bungee", sans-serif;
+  display: block;
+  color: white;
+  padding: 4px;
+  text-decoration: none;
+  font-size: 18px;
+  background-color: rgb(200, 0, 0); /* 背景色を変更する場合 */
 }
 
 .menu-content a:hover {
-    background-color: #ffffff;
-    color: red;
-    font-weight: bold;
+  background-color: #ffffff;
+  color: red;
+  font-weight: bold;
 }
 
 .header {
-    display: flex;
-    align-items: center; /* 中央揃え */
-    background-color: rgb(230, 0, 18);
-    padding: 10px;
+  display: flex;
+  align-items: center; /* 中央揃え */
+  background-color: rgb(230, 0, 18);
+  padding: 10px;
 }
 
-
-
 .logo-text {
-    position: fixed;
-    right: 10%;
-    font-family: 'Jaro', sans-serif; /* Robotoフォントを使用 */
-    color: white; /* 白色テキスト */
-    font-size: 22px; /* 文字サイズ */
-    font-weight: 600; /* 太字 */
+  position: fixed;
+  right: 10%;
+  font-family: "Jaro", sans-serif; /* Robotoフォントを使用 */
+  color: white; /* 白色テキスト */
+  font-size: 22px; /* 文字サイズ */
+  font-weight: 600; /* 太字 */
 }
 
 .menu-section {
-    margin-bottom: 10px; /* セクション間のマージンを減らす */
-    padding-bottom: 10px; /* 必要に応じてパディングも調整 */
+  margin-bottom: 10px; /* セクション間のマージンを減らす */
+  padding-bottom: 10px; /* 必要に応じてパディングも調整 */
 }
 
 .menu-section h3 {
-    cursor: pointer;
-    font-family: 'Teko', sans-serif;
-    color: white;
-    margin-top: 0; /* タイトル上のマージンを削除または減らす */
-    margin-bottom: 0; /* タイトル下のマージンを減らす */
-    padding: 4px;
-    font-size: 22px;
-    background-color: rgb(200, 0, 0);
+  cursor: pointer;
+  font-family: "Teko", sans-serif;
+  color: white;
+  margin-top: 0; /* タイトル上のマージンを削除または減らす */
+  margin-bottom: 0; /* タイトル下のマージンを減らす */
+  padding: 4px;
+  font-size: 22px;
+  background-color: rgb(200, 0, 0);
 }
 
 .arrow {
-    display: inline-block;  /* 矢印をインラインブロックとして配置 */
-    transition: transform 0.3s ease-in-out;  /* トランジションでスムーズな表示変更を実現 */
+  display: inline-block; /* 矢印をインラインブロックとして配置 */
+  transition: transform 0.3s ease-in-out; /* トランジションでスムーズな表示変更を実現 */
 }
 
-
 .submenu {
-    height: 0px;
-    overflow: hidden;
-    transition: height 0.5s ease-out;
+  height: 0px;
+  overflow: hidden;
+  transition: height 0.5s ease-out;
 }
 
 .submenu a {
-    color: white;
-    font-family: 'Yomogi', sans-serif; /* Robotoフォントを使用 */
+  color: white;
+  font-family: "Yomogi", sans-serif; /* Robotoフォントを使用 */
 
-    padding: 5px 20px;
-    text-decoration: none;
-    font-size: 20px;
-    overflow-y: auto; /* 縦スクロールを有効に */
-    background-color: rgb(230, 0, 18);
+  padding: 5px 20px;
+  text-decoration: none;
+  font-size: 20px;
+  overflow-y: auto; /* 縦スクロールを有効に */
+  background-color: rgb(230, 0, 18);
 }
 
 .submenu.open {
-    height: 0;
-    transition: height 0.5s ease-in;
+  height: 0;
+  transition: height 0.5s ease-in;
 }
 
 .submenu a:hover {
-    background-color: #ffffff;
-    color: red;
-    font-weight: bold;
+  background-color: #ffffff;
+  color: red;
+  font-weight: bold;
 }
 
 #arrowButtonImg {
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    z-index: 1;
-    opacity: 0.5;
-    pointer-events: none;
-  }
-  
-  /* スクロールバーを非表示にするスタイル */
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  z-index: 1;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* スクロールバーを非表示にするスタイル */
 .menu-content::-webkit-scrollbar,
 .submenu::-webkit-scrollbar {
-    display: none; /* WebKitブラウザでスクロールバーを非表示に */
+  display: none; /* WebKitブラウザでスクロールバーを非表示に */
 }
 
 .menu-content,
 .submenu {
-    -ms-overflow-style: none; /* IEおよびEdgeでスクロールバーを非表示に */
-    scrollbar-width: none; /* Firefoxでスクロールバーを非表示に */
+  -ms-overflow-style: none; /* IEおよびEdgeでスクロールバーを非表示に */
+  scrollbar-width: none; /* Firefoxでスクロールバーを非表示に */
 }
 
 /* ここから作成始め */
