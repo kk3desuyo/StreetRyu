@@ -9,6 +9,7 @@
       title: "A0" /*表示する写真名(建物名)など必要あれば記入)*/,
       type: "equirectangular", //表示方式,いじる必要なし
       panorama: "image/360pic/A0.jpg" /*表示する写真のパス*/,
+      mapImage: "image/map/A0.jpg" /*表示するマップのパス*/,
       autoLoad: true /*自動読み込み*/,
       hotSpots: [
         {
@@ -313,10 +314,10 @@ function toggleSection(sectionId) {
 						'position': 'fixed',
 						'top': thumbnail_y - scroll_y + 'px',
 						'left': thumbnail_x + 'px',
-						'z-index': '100'
+						'z-index': '99'
 					})
 					.animate({
-						'width': big_w + 'px',
+						'width': big_w + 'px',//最終的な画像の大きさ？
 						'height': big_h + 'px',
 						'top': '50%',
 						'left': '50%',
@@ -374,7 +375,6 @@ function toggleSection(sectionId) {
 	$( 'a.overlay-zoombox' ).on( 'click', zoom_click );
 	
 })( jQuery );
-//ここまでmap
 
 document.addEventListener('click', function(event) {
     var menu = document.getElementById('menuContent');

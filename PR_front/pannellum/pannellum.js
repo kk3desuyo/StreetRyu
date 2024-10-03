@@ -52,6 +52,7 @@ class ManageMoveRange {
   //各地点の範囲とそれに対する移動先
   static ranges = [];
   static locations = [];
+  static map = [];
 
   //現在の地点を取得してその地点に対する範囲と移動先のデータを取得
   static getPosiInfoByLocation(location) {
@@ -64,6 +65,13 @@ class ManageMoveRange {
 
     //地点の格納
     this.locations = nowLocationInfo.moveSets.locations;
+
+    //現在地のマップ
+    for(let i = 0; i < nowLocationInfo.moveSets.map.length; i++)
+      this.map[i] = nowLocationInfo.moveSets.map[i];
+    console.log(this.map);
+    //現在地更新(ここで呼び出すべきかはわからん)
+    MapCurrentUpDate(this.map);
 
     //地点に対応する視点の範囲情報
     var array = nowLocationInfo.moveSets.ranges;
@@ -659,6 +667,15 @@ function displayCursorImg(x, y) {
   // console.log("x:y=", x, y);
   arrowImg.style.left = x + "px";
   arrowImg.style.top = y + "px";
+}
+
+//マップの現在地を更新する関数
+function MapCurrentUpDate(map) {
+  const map_currentImg = document.getElementById("map_current");
+  if((map) && map.length === 2){
+    const [x, y] = map;
+    map_currentImg.style.transformOrigin = `${x}` + "%" + `${y}` + "%";
+  }
 }
 
 //元々の処理一覧
@@ -2467,10 +2484,15 @@ window.pannellum = (function (E, g, p) {
           { roll: (b.roll * Math.PI) / 180 }
         );
         b.hotSpots.forEach(Ca);
+        //コンパスの向きを計算
+        const user_vector = -(-b.yaw - b.northOffset);
+        var map_user = document.getElementById("map_user");
+        // b.compass &&
+        //   ((Ia.style.transform = "rotate(" + user_vector + "deg)"),
+        //   (Ia.style.webkitTransform =
+        //     "rotate(" + user_vector + "deg)"));
         b.compass &&
-          ((Ia.style.transform = "rotate(" + (-b.yaw - b.northOffset) + "deg)"),
-          (Ia.style.webkitTransform =
-            "rotate(" + (-b.yaw - b.northOffset) + "deg)"));
+          (map_user.style.transform = "rotate(" + user_vector + "deg)")
       }
     }
     function Y(a, b, c, d) {
@@ -3144,6 +3166,7 @@ window.pannellum = (function (E, g, p) {
           189,
         ],
         friction: 0.15,
+        //ロード画面のあれこれ
         strings: {
           loadButtonLabel: "Click to<br>Load<br>Panorama",
           loadingLabel: "Loading...",
@@ -3269,7 +3292,8 @@ window.pannellum = (function (E, g, p) {
       0 <= navigator.userAgent.toLowerCase().indexOf("mobi") &&
       (v.container.appendChild(v.orientation), (Xa = !0));
     var Ia = g.createElement("div");
-    Ia.className = "pnlm-compass pnlm-controls pnlm-control";
+    // Ia.className = "pnlm-compass pnlm-controls pnlm-control";
+    Ia.className = "pnlm-compass";
     J.appendChild(Ia);
     k.firstScene
       ? H(k.firstScene)
