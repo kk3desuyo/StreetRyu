@@ -1,5 +1,9 @@
 // Pannellum 2.5.6, https://github.com/mpetroff/pannellum
-
+//hotspot格納
+var hotSpots_g;
+//矢印が向くべき移動ボタンの座標
+var moveButtonX_g = 0;
+var moveButtonY_g = 0;
 //メモ-------------------------------------------------------
 //viewer.setPitch(viewer.getPitch() + 10);で視点の位置帰れるみたい
 //viewer.setYaw(viewer.getYaw() - 10);
@@ -67,7 +71,7 @@ class ManageMoveRange {
     this.locations = nowLocationInfo.moveSets.locations;
 
     //現在地のマップ
-    for(let i = 0; i < nowLocationInfo.moveSets.map.length; i++)
+    for (let i = 0; i < nowLocationInfo.moveSets.map.length; i++)
       this.map[i] = nowLocationInfo.moveSets.map[i];
     console.log(this.map);
     //現在地更新(ここで呼び出すべきかはわからん)
@@ -271,7 +275,7 @@ function waitForLoadAndExecute() {
     const interval = setInterval(() => {
       if (isLoadComplete) {
         clearInterval(interval);
-        hiddenMoveBtn();
+        // hiddenMoveBtn(); デバッグ中
         resolve();
       }
     }, 100); // 100msごとにチェック
@@ -404,7 +408,7 @@ function adjustArrowImg() {
   // console.log("movePosi:", movePosi);
   //デバッグ
   // console.log(ranges);
-  console.log("クリックすると", moveLocationByCursor, "に移動");
+  // console.log("クリックすると", moveLocationByCursor, "に移動");
   for (var i = 0; i < movePosi.length; i++) {
     //移動ボタンの位置が特定できた場合
     for (var j = 0; j < ranges.length; j++) {
@@ -430,13 +434,21 @@ function adjustArrowImg() {
 
 //画像を回転させる
 function rotateArrow(pitchMoveBtn, yawMoveBtn) {
+  // console.log(moveButtonX_g);
+  // console.log(moveLocationByCursor);
+  // console.log(hotSpots_g);
   // pitch_gとyaw_gはグローバル変数として定義されていると仮定します
   // 向きの計算
-  var deltaX = yawMoveBtn - yaw_g;
-  var deltaY = pitchMoveBtn - pitch_g;
+  var deltaX = moveButtonY_g - cursorY_g;
+  var deltaY = moveButtonX_g - cursorX_g;
+
+  if ((yaw_g < 0 && yaw_g > -90) || (yaw_g > 90 && yaw_g < 180)) {
+    var angle = 180 - Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+  } else {
+    var angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+  }
 
   // 角度の計算（ラジアンから度に変換）
-  var angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
 
   // arrowButtonImgのCSSを更新して回転させる
   var arrowButtonImg = document.querySelector("#arrowButtonImg");
@@ -473,6 +485,7 @@ function rotateArrow(pitchMoveBtn, yawMoveBtn) {
     );
   }
 }
+
 function toCartesian(pitch, yaw) {
   // ラジアンに変換
   const toRadians = (angle) => angle * (Math.PI / 180);
@@ -672,7 +685,7 @@ function displayCursorImg(x, y) {
 //マップの現在地を更新する関数
 function MapCurrentUpDate(map) {
   const map_currentImg = document.getElementById("map_current");
-  if((map) && map.length === 2){
+  if (map && map.length === 2) {
     const [x, y] = map;
     map_currentImg.style.transformOrigin = `${x}` + "%" + `${y}` + "%";
   }
@@ -2375,6 +2388,11 @@ window.pannellum = (function (E, g, p) {
       Ta || ((Ta = !0), ca());
     }
     function ca() {
+      document.addEventListener("mousemove", () => {
+        console.log("aaa");
+        hotSpots_g.forEach(Ca);
+      });
+
       if (!Za)
         if ((Fa(), Qa && clearTimeout(Qa), ha || !0 === X))
           requestAnimationFrame(ca);
@@ -2492,7 +2510,7 @@ window.pannellum = (function (E, g, p) {
         //   (Ia.style.webkitTransform =
         //     "rotate(" + user_vector + "deg)"));
         b.compass &&
-          (map_user.style.transform = "rotate(" + user_vector + "deg)")
+          (map_user.style.transform = "rotate(" + user_vector + "deg)");
       }
     }
     function Y(a, b, c, d) {
@@ -2656,6 +2674,7 @@ window.pannellum = (function (E, g, p) {
       a.div = f;
     }
     function L() {
+      hotSpots_g = b.hotSpots;
       Ua ||
         (b.hotSpots
           ? ((b.hotSpots = b.hotSpots.sort(function (a, b) {
@@ -2727,6 +2746,13 @@ window.pannellum = (function (E, g, p) {
           "px) translateZ(9999px) rotate(" +
           b.roll +
           "deg)";
+
+        //movelocationByCursolと一致する場合にのみ画像の回転を実行するよう
+        if (moveLocationByCursor == a.sceneId) {
+          moveButtonX_g = f[0];
+          moveButtonY_g = f[1];
+        }
+
         a.scale && (p += " scale(" + ra / b.hfov / h + ")");
         a.div.style.webkitTransform = p;
         a.div.style.MozTransform = p;

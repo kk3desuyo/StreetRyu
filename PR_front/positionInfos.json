@@ -51,8 +51,8 @@
     {
       "positionId": "A6",
       "moveSets": {
-        "ranges": [0, 90, 90, 270],
-        "locations": ["B0", "A5"],
+        "ranges": [-90, 0, 0, 90, 90, 270],
+        "locations": ["B0", "C0", "A5"],
         "map": [68.4, 73.5]
       }
     },
