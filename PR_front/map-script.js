@@ -1,4 +1,5 @@
-﻿const JSONFILEPATH = "./positionInfos.json";
+﻿var viewer;
+const JSONFILEPATH = "./positionInfos.json";
 // JSONファイルからデータを読み込む
 fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
   .then((response) => response.json())
@@ -13,18 +14,11 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
         const hotSpots = [];
         var yaw;
         var pitch;
-        console.log(position.moveSets.ranges);
+
         // 各ホットスポット（moveSet）を追加
         for (let i = 0; i < position.moveSets.locations.length; i++) {
           const targetLocation = position.moveSets.locations[i];
-          console.log(
-            sceneId,
-            position.moveSets.locations.length == 2 &&
-              position.moveSets.ranges[0] == -90 &&
-              position.moveSets.ranges[1] == 90 &&
-              position.moveSets.ranges[2] == 90 &&
-              position.moveSets.ranges[3] == 270
-          );
+
           //まっすぐなとこのyaw pitch処理
           if (
             position.moveSets.locations.length == 2 &&
@@ -41,13 +35,6 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
           }
           //まっすぐ以外
           else {
-            console.log(
-              sceneId,
-              calculateMidYaw(
-                position.moveSets.ranges[i * 2],
-                position.moveSets.ranges[i * 2 + 1]
-              )
-            );
             yaw = calculateMidYaw(
               position.moveSets.ranges[i * 2],
               position.moveSets.ranges[i * 2 + 1]
@@ -74,12 +61,12 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
           hotSpots: hotSpots,
         };
       });
-      console.log(scenes);
+
       return scenes;
     };
 
     // pannellum viewerを生成
-    const viewer = pannellum.viewer("panorama", {
+    viewer = pannellum.viewer("panorama", {
       default: {
         firstScene: "A0",
         sceneFadeDuration: 1000,

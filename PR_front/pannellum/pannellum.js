@@ -59,7 +59,7 @@ class ManageMoveRange {
   static map = [];
 
   //現在の地点を取得してその地点に対する範囲と移動先のデータを取得
-  static getPosiInfoByLocation(location) {
+  static async getPosiInfoByLocation(location) {
     var nowLocationInfo = this.posiInfos.positions.find(
       (position) => position.positionId === location
     );
@@ -73,7 +73,7 @@ class ManageMoveRange {
     //現在地のマップ
     for (let i = 0; i < nowLocationInfo.moveSets.map.length; i++)
       this.map[i] = nowLocationInfo.moveSets.map[i];
-    console.log(this.map);
+    // console.log(this.map);
     //現在地更新(ここで呼び出すべきかはわからん)
     MapCurrentUpDate(this.map);
 
@@ -89,12 +89,12 @@ class ManageMoveRange {
       countProcessRange++;
       // 分割する場合には地点を一つ増やす
       if (splitedRanges.length == 2) {
-        console.log(
-          countProcessRange,
-          "番目を複製します。",
-          "複製前:",
-          this.locations
-        );
+        // console.log(
+        //   countProcessRange,
+        //   "番目を複製します。",
+        //   "複製前:",
+        //   this.locations
+        // );
 
         //この部分深いコピーをしないと、バグるので注意
         // 深いコピーを作成
@@ -106,7 +106,7 @@ class ManageMoveRange {
         );
         this.locations = newLocations;
 
-        console.log(this.locations);
+        // console.log(this.locations);
       }
 
       for (const range of splitedRanges) {
@@ -184,26 +184,27 @@ class ManageMoveRange {
   //   ManageMoveRange.isProcessing = false;
   // }
   static async moveSetting(location) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      // asyncを追加
       try {
-        console.log("移動設定開始");
+        // console.log("移動設定開始");
         prevLocation_g = location;
         // 初期化
         this.ranges = [];
         this.locations = [];
-        console.log(location, "の移動設定をします。");
+        // console.log(location, "の移動設定をします。");
 
-        // データの取得と静的変数への代入
-        this.getPosiInfoByLocation(location);
+        // getPosiInfoByLocationを非同期にしてawaitで待機
+        await this.getPosiInfoByLocation(location); // async処理の完了を待機
 
-        console.log(
-          location,
-          "の移動設定情報は",
-          "ranges:",
-          this.ranges,
-          "locations:",
-          this.locations
-        );
+        // console.log(
+        //   location,
+        //   "の移動設定情報は",
+        //   "ranges:",
+        //   this.ranges,
+        //   "locations:",
+        //   this.locations
+        // );
 
         // 非同期処理が完了したことを示す
         resolve();
@@ -261,16 +262,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// 画像の読み込みを監視して、読み込み完了後にhiddenMoveBtnを実行する関数
-// function waitForLoadAndExecute() {
-//   const interval = setInterval(() => {
-//     if (isLoadComplete) {
-//       clearInterval(interval);
-//       hiddenMoveBtn();
-//     }
-//   }, 100); // 100msごとにチェック
-// }
-function waitForLoadAndExecute() {
+async function waitForLoadAndExecute() {
   return new Promise((resolve) => {
     const interval = setInterval(() => {
       if (isLoadComplete) {
@@ -282,7 +274,7 @@ function waitForLoadAndExecute() {
   });
 }
 //画面の移動ボタンを消す 正常に消せた場合にはtrue 異常 or ボタンがない場合にfalse返却
-function hiddenMoveBtn() {
+async function hiddenMoveBtn() {
   //移動ボタンを全て非表示
   //デバッグ中
   const pnlmSceneDivs = document.querySelectorAll("div.pnlm-scene");
@@ -296,48 +288,41 @@ function hiddenMoveBtn() {
   }
 }
 async function addEventMoveBtn() {
-  console.log("移動ボタンにリスナーを追加しました。");
+  // console.log("移動ボタンにリスナーを追加しました。");
   await sleep(1000);
-  console.log("------------移動ボタン一覧------------");
+  // console.log("------------移動ボタン一覧------------");
 
   // //ぱねりうむの移動ボタンにリスナー追加
   document.querySelectorAll("div.pnlm-scene").forEach((div) => {
-    // divElementをここで定義する
-    const divElement = div;
-
-    // divElementの中からspan要素を探す
-    const spanElement = divElement.querySelector("span");
-
-    // spanElementが存在するか確認
-    if (spanElement) {
-      console.log(spanElement.textContent);
-    } else {
-      console.error("spanElementが見つかりません");
-    }
-
     div.addEventListener("click", async function () {
-      ManageMoveRange.isProcessing = true;
-      console.log("処理を開始します", ManageMoveRange.isProcessing);
-      try {
-        await sleep(300);
+      // Check if the load is complete, otherwise ignore the click
+      if (!isLoadComplete) {
+        console.log("Load not complete, ignoring click");
+        return; // Prevent the click event from being processed
+      }
 
-        // 戻っている場合には視点を真後ろを向くようにする
+      ManageMoveRange.isProcessing = true;
+      // console.log("Processing started:", ManageMoveRange.isProcessing);
+
+      try {
+        await sleep(800);
+
+        // If returning, face backwards
         if (isReturn(document.querySelector(".pnlm-title-box").textContent)) {
           viewer.setYaw(180);
         }
 
-        // 画像の読み込み完了後に移動ボタンの非表示処理を行う関数
+        // Wait until the load is complete before hiding buttons
         await waitForLoadAndExecute();
-        console.log("ボタンの非表示完了");
-        // 移動の設定
+        // Set the movement settings for the current location
         await ManageMoveRange.moveSetting(
           document.querySelector(".pnlm-title-box").textContent
         );
-        console.log("移動の設定情報反映完了");
+        // console.log("移動設定更新完了");
       } catch (error) {
-        console.error("エラーが発生しました:", error);
+        console.error("Error", error);
       } finally {
-        console.log("処理を終了します", ManageMoveRange.isProcessing);
+        // console.log("Processing ended:", ManageMoveRange.isProcessing);
         ManageMoveRange.isProcessing = false;
       }
     });
@@ -346,7 +331,7 @@ async function addEventMoveBtn() {
 //戻っている場合にはtrueを返却
 
 function isReturn(now) {
-  console.log("prev", prevLocation_g, "now:", now);
+  // console.log("prev", prevLocation_g, "now:", now);
   const prevLetter = prevLocation_g.charAt(0);
   const prevNumber = parseInt(prevLocation_g.substring(1));
   const nowLetter = now.charAt(0);
@@ -429,7 +414,6 @@ function adjustArrowImg() {
       }
     }
   }
-  console.log("移動ボタンが正確に取得できませんでした。");
 }
 
 //画像を回転させる
@@ -519,25 +503,21 @@ function scaleImageBasedOnDistance(distance, maxDistance) {
 }
 
 async function handleMouseUp() {
-  console.log(isDragging);
   var panoramaDiv = document.getElementById("panorama");
 
   panoramaDiv.removeEventListener("mouseup", handleMouseUp);
 
   try {
     if (!isDragging) {
-      console.log("クリック");
-
       // パノラマ内のクリックにのみ反応
       if (isCursorInPanorama(cursorX_g, cursorY_g)) {
         //移動の処理
-        console.log(
-          "クリックされた場所では",
-          ManageMoveRange.getMovePlace(yaw_g),
-          "に移動します。"
-        );
-        var isExistLocation = move(ManageMoveRange.getMovePlace(yaw_g));
-        console.log(isExistLocation);
+        // console.log(
+        //   "クリックされた場所では",
+        //   ManageMoveRange.getMovePlace(yaw_g),
+        //   "に移動します。"
+        // );
+        var isExistLocation = await move(ManageMoveRange.getMovePlace(yaw_g));
 
         //移動地点にて再度移動ボタンのリスナー追加 + ボタン非表示
         await addEventMoveBtn();
@@ -629,15 +609,15 @@ window.onload = async () => {
 };
 // 地点を移動できた場合には true、失敗時には false を返却
 async function move(location) {
-  console.log("移動の処理を開始します");
-  console.log(location, "のボタンを検索します。");
+  // console.log("移動の処理を開始します");
+  // console.log(location, "のボタンを検索します。");
   // 元々の移動ボタンを取得
   const pnlmSceneDivs = document.querySelectorAll("div.pnlm-scene");
   if (!pnlmSceneDivs.length) {
     alert("ページを再度読み込んでください");
     return false;
   }
-  console.log("--移動先ボタン一覧---");
+  // console.log("--移動先ボタン一覧---");
   // 取得した span タグのテキストと地点の名前が同じやつを探す
   for (let div of pnlmSceneDivs) {
     // div 内の span タグを全て取得
@@ -645,7 +625,7 @@ async function move(location) {
 
     // span タグのテキストと location を比較
     for (let span of spanElements) {
-      console.log(span.textContent);
+      // console.log(span.textContent);
       if (span.textContent === location) {
         // 擬似的に該当の移動ボタンをクリックする
         div.click();
