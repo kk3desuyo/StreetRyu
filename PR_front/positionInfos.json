@@ -63,6 +63,14 @@
         "locations": ["B1", "A6"],
         "map": [68.4, 73.5]
       }
+    },
+    {
+      "positionId": "C0",
+      "moveSets": {
+        "ranges": [0, 90, 90, 270],
+        "locations": ["B1", "A6"],
+        "map": [68.4, 73.5]
+      }
     }
   ]
 }

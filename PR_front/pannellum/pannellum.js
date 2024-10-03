@@ -275,7 +275,7 @@ function waitForLoadAndExecute() {
     const interval = setInterval(() => {
       if (isLoadComplete) {
         clearInterval(interval);
-        // hiddenMoveBtn(); デバッグ中
+        hiddenMoveBtn();
         resolve();
       }
     }, 100); // 100msごとにチェック
@@ -2389,7 +2389,6 @@ window.pannellum = (function (E, g, p) {
     }
     function ca() {
       document.addEventListener("mousemove", () => {
-        console.log("aaa");
         hotSpots_g.forEach(Ca);
       });
 
