@@ -41,23 +41,43 @@ class ManageMoveRange {
   static isProcessing = false;
   //静的初期化子
   static {
-    fetch("./positionInfos.json")
-      .then((response) => response.json())
-      .then((data) => {
-        this.posiInfos = data;
-      })
-      .catch((error) => {
-        console.error(
-          "JSONのデータ取得時にエラーが発生しました。Error:",
-          error
-        );
-      });
+    this.initializePosiInfos();
   }
+  static async initializePosiInfos() {
+    try {
+      const response = await fetch("./positionInfos.json");
+      const data = await response.json();
+      this.posiInfos = await this.updatePosiInfos(data);
+    } catch (error) {
+      console.error("JSONのデータ取得時にエラーが発生しました。Error:", error);
+    }
+  }
+
   //各地点の範囲とそれに対する移動先
   static ranges = [];
   static locations = [];
   static map = [];
+  static async updatePosiInfos(data_before) {
+    const data = data_before;
+    data.positions.forEach((position) => {
+      if (position.moveSets.straight) {
+        const basePositionId = position.positionId;
+        const baseLetter = basePositionId.charAt(0);
+        const baseNumber = parseInt(basePositionId.slice(1));
 
+        const incrementedLocation = baseLetter + (baseNumber + 1);
+        const decrementedLocation = baseLetter + (baseNumber - 1);
+
+        position.moveSets.locations = [
+          incrementedLocation,
+          decrementedLocation,
+        ];
+        position.moveSets.ranges = [-90, 90, 90, 270];
+      }
+    });
+
+    return data;
+  }
   //現在の地点を取得してその地点に対する範囲と移動先のデータを取得
   static async getPosiInfoByLocation(location) {
     var nowLocationInfo = this.posiInfos.positions.find(

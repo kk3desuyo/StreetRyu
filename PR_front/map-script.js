@@ -14,26 +14,38 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
         const hotSpots = [];
         var yaw;
         var pitch;
+        var count;
 
+        position.moveSets.straight == true
+          ? (count = 2)
+          : (count = position.moveSets.locations.length);
         // 各ホットスポット（moveSet）を追加
-        for (let i = 0; i < position.moveSets.locations.length; i++) {
-          const targetLocation = position.moveSets.locations[i];
-
+        for (let i = 0; i < count; i++) {
           //まっすぐなとこのyaw pitch処理
-          if (
-            position.moveSets.locations.length == 2 &&
-            position.moveSets.ranges[0] == -90 &&
-            position.moveSets.ranges[1] == 90 &&
-            position.moveSets.ranges[2] == 90 &&
-            position.moveSets.ranges[3] == 270
-          ) {
-            if (position.moveSets.ranges[i * 2 + 1] == 90) {
+          if (position.moveSets.straight == true) {
+            // `positionId` 末尾の数字に対して1増やした地点と減らした地点を計算
+            const basePositionNumber = parseInt(sceneId.slice(1)); // `A1` のように最初の文字を除外して数字を取得
+            const incrementedPosition =
+              sceneId.charAt(0) + (basePositionNumber + 1); // 数字を1増やした地点
+            const decrementedPosition =
+              sceneId.charAt(0) + (basePositionNumber - 1); // 数字を1減らした地点
+            console.log("base", basePositionNumber);
+            console.log("inc", incrementedPosition);
+            console.log("dec", decrementedPosition);
+            // `ranges` の値に応じてyawを決定
+            if (i == 0) {
               yaw = 0;
             } else {
               yaw = 180;
             }
+
+            // 自動的にlocationsを更新
+            position.moveSets.locations = [
+              incrementedPosition,
+              decrementedPosition,
+            ];
           }
-          //まっすぐ以外
+          // まっすぐ以外
           else {
             yaw = calculateMidYaw(
               position.moveSets.ranges[i * 2],
@@ -43,6 +55,14 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
 
           const pitch = 0;
 
+          const targetLocation = position.moveSets.locations[i];
+          // console.log({
+          //   pitch: pitch,
+          //   yaw: yaw,
+          //   type: "scene",
+          //   text: targetLocation,
+          //   sceneId: targetLocation,
+          // });
           hotSpots.push({
             pitch: pitch,
             yaw: yaw,
@@ -51,7 +71,7 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
             sceneId: targetLocation,
           });
         }
-
+        console.log("-------------------------------------");
         // 各positionに対応するシーンを生成
         scenes[sceneId] = {
           title: sceneId,
@@ -61,7 +81,7 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
           hotSpots: hotSpots,
         };
       });
-
+      console.log(scenes);
       return scenes;
     };
 
