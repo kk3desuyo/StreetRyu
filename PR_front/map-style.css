@@ -172,10 +172,10 @@
   cursor: pointer;
   overflow: hidden; /*変更不可*/
   border-radius: 100%;
-  border: 10px solid #f00;
+  border: 5px solid #f00;
 }
 #map_user {
-  width: 5vw;
+  width: 4vw;
   position: absolute;
   z-index: 2;
   cursor: pointer;
@@ -200,7 +200,7 @@
   object-fit: cover;
   text-align: center;
   transform-origin: 68.4% 88.5%;
-  transform: scale(20); /*倍率絶対にいじるな*/
+  transform: scale(11); /*倍率絶対にいじるな*/
   z-index: 2;
   pointer-events: none;
 }
