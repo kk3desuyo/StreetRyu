@@ -59,12 +59,12 @@
       "moveSets": {
         "straight": false,
         "ranges": [-90, 0, 0, 90, 90, 270],
-        "locations": ["B0", "C0", "A5"],
+        "locations": ["B3", "C0", "A5"],
         "map": [68.8, 69.5]
       }
     },
     {
-      "positionId": "B0",
+      "positionId": "B3",
       "moveSets": {
         "straight": false,
         "ranges": [0, 90, 90, 270],
