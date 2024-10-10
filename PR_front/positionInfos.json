@@ -1,4 +1,8 @@
 {
+  "routeSettings": [
+    { "route": "A", "adjustImg": 0, "reverse": false, "maxId": 6 },
+    { "route": "B", "adjustImg": -90, "reverse": true, "maxId": 3 }
+  ],
   "positions": [
     {
       "positionId": "A0",

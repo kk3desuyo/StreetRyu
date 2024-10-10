@@ -1,4 +1,9 @@
 // Pannellum 2.5.6, https://github.com/mpetroff/pannellum
+//ルート逆のやつ
+var reverseArray = new Map();
+//画像修正が必要なやつ
+var adjustImg = new Map();
+var routeMaxId = new Map();
 //hotspot格納
 var hotSpots_g;
 //矢印が向くべき移動ボタンの座標
@@ -80,6 +85,7 @@ class ManageMoveRange {
   }
   //現在の地点を取得してその地点に対する範囲と移動先のデータを取得
   static async getPosiInfoByLocation(location) {
+    console.log(this.ranges, this.locations);
     var nowLocationInfo = this.posiInfos.positions.find(
       (position) => position.positionId === location
     );
@@ -287,7 +293,7 @@ async function waitForLoadAndExecute() {
     const interval = setInterval(() => {
       if (isLoadComplete) {
         clearInterval(interval);
-        hiddenMoveBtn();
+        // hiddenMoveBtn();
         resolve();
       }
     }, 100); // 100msごとにチェック
@@ -311,34 +317,149 @@ async function addEventMoveBtn() {
   // console.log("移動ボタンにリスナーを追加しました。");
   await sleep(1000);
   // console.log("------------移動ボタン一覧------------");
-
+  await getRoteStteing();
   // //ぱねりうむの移動ボタンにリスナー追加
   document.querySelectorAll("div.pnlm-scene").forEach((div) => {
     div.addEventListener("click", async function () {
-      // Check if the load is complete, otherwise ignore the click
       if (!isLoadComplete) {
         console.log("Load not complete, ignoring click");
         return; // Prevent the click event from being processed
       }
 
       ManageMoveRange.isProcessing = true;
-      // console.log("Processing started:", ManageMoveRange.isProcessing);
 
       try {
         await sleep(800);
 
-        // If returning, face backwards
-        if (isReturn(document.querySelector(".pnlm-title-box").textContent)) {
-          viewer.setYaw(180);
+        //ルートによって方向が違うので補正分
+        var adjustYaw = 0;
+
+        var nowPosi = document
+          .querySelector(".pnlm-title-box")
+          .textContent.charAt(0);
+        console.log(reverseArray.keys, reverseArray.has(nowPosi), nowPosi);
+        if (!reverseArray.has(nowPosi)) {
+          console.log("普通");
+          adjustYaw = reverseArray.get(nowPosi);
+          if (
+            isReturn(
+              document.querySelector(".pnlm-title-box").textContent,
+              false,
+              -1
+            )
+          ) {
+            viewer.setYaw(
+              Range.changeCoordinateForPannellum(
+                180 +
+                  (adjustImg.get(
+                    document
+                      .querySelector(".pnlm-title-box")
+                      .textContent.charAt(0)
+                  ) == undefined
+                    ? 0
+                    : adjustImg.get(
+                        document
+                          .querySelector(".pnlm-title-box")
+                          .textContent.charAt(0)
+                      ))
+              )
+            );
+          } else {
+            viewer.setYaw(
+              Range.changeCoordinateForPannellum(
+                adjustImg.get(
+                  document
+                    .querySelector(".pnlm-title-box")
+                    .textContent.charAt(0)
+                ) == undefined
+                  ? 0
+                  : adjustImg.get(
+                      document
+                        .querySelector(".pnlm-title-box")
+                        .textContent.charAt(0)
+                    )
+              )
+            );
+          }
+        } else {
+          console.log("逆");
+
+          if (
+            isReturn(
+              document.querySelector(".pnlm-title-box").textContent,
+              true,
+              routeMaxId.get(nowPosi)
+            )
+          ) {
+            console.log(
+              180 +
+                (adjustImg.get(
+                  document
+                    .querySelector(".pnlm-title-box")
+                    .textContent.charAt(0)
+                ) == undefined
+                  ? 0
+                  : adjustImg.get(
+                      document
+                        .querySelector(".pnlm-title-box")
+                        .textContent.charAt(0)
+                    )),
+              Range.changeCoordinateForPannellum(
+                180 +
+                  adjustImg.get(
+                    document
+                      .querySelector(".pnlm-title-box")
+                      .textContent.charAt(0)
+                  ) ==
+                  undefined
+                  ? 0
+                  : adjustImg.get(
+                      document
+                        .querySelector(".pnlm-title-box")
+                        .textContent.charAt(0)
+                    )
+              )
+            );
+            viewer.setYaw(
+              Range.changeCoordinateForPannellum(
+                180 +
+                  (adjustImg.get(
+                    document
+                      .querySelector(".pnlm-title-box")
+                      .textContent.charAt(0)
+                  ) == undefined
+                    ? 0
+                    : adjustImg.get(
+                        document
+                          .querySelector(".pnlm-title-box")
+                          .textContent.charAt(0)
+                      ))
+              )
+            );
+          } else {
+            viewer.setYaw(
+              Range.changeCoordinateForPannellum(
+                adjustImg.get(
+                  document
+                    .querySelector(".pnlm-title-box")
+                    .textContent.charAt(0)
+                ) == undefined
+                  ? 0
+                  : adjustImg.get(
+                      document
+                        .querySelector(".pnlm-title-box")
+                        .textContent.charAt(0)
+                    )
+              )
+            );
+          }
         }
 
-        // Wait until the load is complete before hiding buttons
         await waitForLoadAndExecute();
-        // Set the movement settings for the current location
+
         await ManageMoveRange.moveSetting(
           document.querySelector(".pnlm-title-box").textContent
         );
-        // console.log("移動設定更新完了");
       } catch (error) {
         console.error("Error", error);
       } finally {
@@ -350,28 +471,76 @@ async function addEventMoveBtn() {
 }
 //戻っている場合にはtrueを返却
 
-function isReturn(now) {
+function isReturn(now, reverse, maxPosiId) {
   // console.log("prev", prevLocation_g, "now:", now);
   const prevLetter = prevLocation_g.charAt(0);
   const prevNumber = parseInt(prevLocation_g.substring(1));
   const nowLetter = now.charAt(0);
   const nowNumber = parseInt(now.substring(1));
 
-  // 文字が異なる場合の処理
-  if (prevLetter !== nowLetter) {
-    if (nowNumber === 0) {
+  if (reverse == false) {
+    // 文字が異なる場合の処理
+    if (prevLetter !== nowLetter) {
+      if (nowNumber === 0) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    // 文字が同じ場合の処理
+    if (prevLocation_g < now) {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    // 文字が異なる場合の処理
+    if (prevLetter !== nowLetter) {
+      if (nowNumber === maxPosiId) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    // 文字が同じ場合の処理
+    if (prevLocation_g > now) {
       return false;
     } else {
       return true;
     }
   }
+}
 
-  // 文字が同じ場合の処理
-  if (prevLocation_g < now) {
-    return false;
-  } else {
-    return true;
-  }
+async function getRoteStteing() {
+  fetch(JSONFILEPATH)
+    .then((response) => response.json())
+    .then((data) => {
+      // JSONのrouteSettingsからマップに値をセット
+      data.routeSettings.forEach((setting) => {
+        const route = setting.route;
+
+        // reverseがtrueの場合にreverseArrayに追加
+        if (setting.reverse) {
+          reverseArray.set(route, 90); // 必要に応じて角度は変更
+        }
+
+        // adjustImgの設定
+        adjustImg.set(route, setting.adjustImg);
+
+        // maxIdの設定
+        routeMaxId.set(route, setting.maxId);
+      });
+
+      // 結果の確認
+      console.log("reverseArray:", reverseArray);
+      console.log("adjustImg:", adjustImg);
+      console.log("routeMaxId:", routeMaxId);
+    })
+    .catch((error) => {
+      console.error("Error loading the JSON file:", error);
+    });
 }
 
 //矢印画像関係 ----------------------------------------------------------------
