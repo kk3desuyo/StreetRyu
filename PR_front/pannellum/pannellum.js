@@ -25,8 +25,8 @@ const routeMap = {
   PW: { reverse: true}, //?
   PV: { reverse: true}, //?
   TX: { reverse: false},
-  WX: { reverse: false},
-  PX: { reverse: true}, //?
+  WX: { reverse: true},
+  PX: { reverse: false}, //?
   PZ: { reverse: true}, //?
   PO: { reverse: false},
   PN: { reverse: false},
@@ -2189,7 +2189,10 @@ window.pannellum = (function (E, g, p) {
               (b.vOffset = -180 * ((l + h / 2) / g - 0.5)),
             null !== k &&
               0 > aa.indexOf("northOffset") &&
-              ((b.northOffset = k), !1 !== b.compass && (b.compass = !0)),
+              ((b.northOffset = k), 
+              // !1 !== b.compass && (b.compass = !0)),
+              b.compass == true),
+              //b.compassを常にtrueにしてみる　バグったらごめんなさい
             null !== m &&
               null !== e &&
               (0 > aa.indexOf("horizonPitch") && (b.horizonPitch = m),
@@ -2760,8 +2763,12 @@ window.pannellum = (function (E, g, p) {
         //   ((Ia.style.transform = "rotate(" + user_vector + "deg)"),
         //   (Ia.style.webkitTransform =
         //     "rotate(" + user_vector + "deg)"));
-        b.compass &&
-          (map_user.style.transform = "rotate(" + user_vector + "deg)");
+        // b.compass &&
+        //   (map_user.style.transform = "rotate(" + user_vector + "deg)");
+        // b.compass &&
+        //   (console.log("コンパスの向きを変更しました"));
+        //画像の中心位置変更によってb.compass != trueになってしまったため、常時コンパス機能をオンに
+        map_user.style.transform = "rotate(" + user_vector + "deg)"
       }
     }
     function Y(a, b, c, d) {

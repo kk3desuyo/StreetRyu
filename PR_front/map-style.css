@@ -199,7 +199,7 @@
   position: absolute;
   object-fit: cover;
   text-align: center;
-  transform-origin: 68.4% 88.5%;
+  transform-origin: 69.2% 88.5%;
   transform: scale(11); /*倍率絶対にいじるな*/
   z-index: 2;
   pointer-events: none;
