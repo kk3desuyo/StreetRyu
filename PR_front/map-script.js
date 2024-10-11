@@ -88,7 +88,7 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
     // pannellum viewerを生成
     viewer = pannellum.viewer("panorama", {
       default: {
-        firstScene: "A0",
+        firstScene: "M8",
         sceneFadeDuration: 1000,
       },
       scenes: createPannellumScenes(data),
