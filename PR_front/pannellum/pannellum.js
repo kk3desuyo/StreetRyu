@@ -45,7 +45,9 @@ const routeMap = {
   GI: { reverse: false},
   GJ: { reverse: true} //?
 };
-
+//Map_Userが向く方向をルートごとに設定するための値
+var RouteUserDir = new Map();
+var NowUserDir;
 //ルート逆のやつ
 var reverseArray = new Map();
 //画像修正が必要なやつ
@@ -386,6 +388,7 @@ async function addEventMoveBtn() {
           .querySelector(".pnlm-title-box")
           .textContent.charAt(0);
         console.log(nowPosi, prevLocation_g);
+        NowUserDir = nowPosi;
 
         const prevLetter = prevLocation_g.charAt(0);
         const prevNumber = parseInt(prevLocation_g.substring(1));
@@ -612,6 +615,9 @@ async function getRoteStteing() {
 
         // maxIdの設定
         routeMaxId.set(route, setting.maxId);
+
+        //map_userの向いている方向を設定
+        RouteUserDir.set(route, setting.mapdirection); 
       });
 
       // 結果の確認
@@ -2757,7 +2763,7 @@ window.pannellum = (function (E, g, p) {
         );
         b.hotSpots.forEach(Ca);
         //コンパスの向きを計算
-        const user_vector = -(-b.yaw - b.northOffset);
+        const user_vector = -(-b.yaw - b.northOffset - RouteUserDir.get(NowUserDir));
         var map_user = document.getElementById("map_user");
         // b.compass &&
         //   ((Ia.style.transform = "rotate(" + user_vector + "deg)"),
