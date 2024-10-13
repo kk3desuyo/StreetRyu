@@ -37,7 +37,7 @@
   position: absolute;
   object-fit: cover;
   text-align: center;
-  transform-origin: 64.2% 65.5%;
+  transform-origin: 51.8% 47.2%;
   transform: scale(11); /*倍率絶対にいじるな*/
   z-index: 2;
   pointer-events: none;

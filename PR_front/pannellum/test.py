@@ -24,9 +24,9 @@ def rotate_360_image(image_path, output_path, angle):
     print(f"画像が保存されました: {output_path}")
 
 # 360度画像のパス、出力パス、回転角度を指定して実行
-img = 'M8'
+img = 'M10'
 image_path = '../image/360pic/' + img + '.JPG'  # 入力画像パス
 output_path = '../image/360pic/' + img + '.JPG'      # 出力画像パス
-angle = 35 # 回転させたい角度（例：90度）
+angle = 5 # 回転させたい角度（例：90度）
 
 rotate_360_image(image_path, output_path, angle)
