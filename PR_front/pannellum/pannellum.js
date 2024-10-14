@@ -1,4 +1,53 @@
 // Pannellum 2.5.6, https://github.com/mpetroff/pannellum
+
+// 未テスト データ入力後テストお願いします。
+const routeMap = {
+  AB: { reverse: true },
+  AC: { reverse: false },
+  BC: { reverse: false },
+  BD: { reverse: false },
+  BZ: { reverse: false },
+  BO: { reverse: false },
+  DF: { reverse: true },
+  DL: { reverse: false },
+  FL: { reverse: false },
+  LU: { reverse: false },
+  LW: { reverse: false },
+  UW: { reverse: false },
+  UK: { reverse: true },
+  UQ: { reverse: true },
+  UR: { reverse: false },
+  RQ: { reverse: false },
+  KR: { reverse: false },
+  TR: { reverse: false },
+  TQ: { reverse: false },
+  TP: { reverse: false },
+  PW: { reverse: true }, //?
+  PV: { reverse: true }, //?
+  TX: { reverse: false },
+  WX: { reverse: true },
+  PX: { reverse: false }, //?
+  PZ: { reverse: true }, //?
+  PO: { reverse: false },
+  PN: { reverse: false },
+  NA: { reverse: false },
+  NM: { reverse: true },
+  MJ: { reverse: false },
+  MI: { reverse: true },
+  IC: { reverse: false }, //?
+  CE: { reverse: false },
+  EF: { reverse: false },
+  EG: { reverse: false },
+  FG: { reverse: false },
+  JH: { reverse: true },
+  JK: { reverse: false },
+  HK: { reverse: false },
+  GI: { reverse: false },
+  GJ: { reverse: true }, //?
+};
+//Map_Userが向く方向をルートごとに設定するための値
+var RouteUserDir = new Map();
+var NowUserDir;
 //ルート逆のやつ
 var reverseArray = new Map();
 //画像修正が必要なやつ
@@ -293,7 +342,7 @@ async function waitForLoadAndExecute() {
     const interval = setInterval(() => {
       if (isLoadComplete) {
         clearInterval(interval);
-        // hiddenMoveBtn();
+        hiddenMoveBtn();
         resolve();
       }
     }, 100); // 100msごとにチェック
@@ -313,9 +362,10 @@ async function hiddenMoveBtn() {
     return false;
   }
 }
+
 async function addEventMoveBtn() {
   // console.log("移動ボタンにリスナーを追加しました。");
-  await sleep(1000);
+
   // console.log("------------移動ボタン一覧------------");
   await getRoteStteing();
   // //ぱねりうむの移動ボタンにリスナー追加
@@ -329,131 +379,165 @@ async function addEventMoveBtn() {
       ManageMoveRange.isProcessing = true;
 
       try {
-        await sleep(800);
-
         //ルートによって方向が違うので補正分
         var adjustYaw = 0;
-
+        await sleep(100); //これ消すと動かない
+        console.log(document.querySelector(".pnlm-title-box").textContent);
         var nowPosi = document
           .querySelector(".pnlm-title-box")
           .textContent.charAt(0);
-        console.log(reverseArray.keys, reverseArray.has(nowPosi), nowPosi);
-        if (!reverseArray.has(nowPosi)) {
-          console.log("普通");
-          adjustYaw = reverseArray.get(nowPosi);
-          if (
-            isReturn(
-              document.querySelector(".pnlm-title-box").textContent,
-              false,
-              -1
-            )
-          ) {
-            viewer.setYaw(
-              Range.changeCoordinateForPannellum(
-                180 +
-                  (adjustImg.get(
-                    document
-                      .querySelector(".pnlm-title-box")
-                      .textContent.charAt(0)
-                  ) == undefined
-                    ? 0
-                    : adjustImg.get(
-                        document
-                          .querySelector(".pnlm-title-box")
-                          .textContent.charAt(0)
-                      ))
-              )
-            );
-          } else {
-            viewer.setYaw(
-              Range.changeCoordinateForPannellum(
-                adjustImg.get(
-                  document
-                    .querySelector(".pnlm-title-box")
-                    .textContent.charAt(0)
-                ) == undefined
-                  ? 0
-                  : adjustImg.get(
-                      document
-                        .querySelector(".pnlm-title-box")
-                        .textContent.charAt(0)
-                    )
-              )
-            );
-          }
-        } else {
-          console.log("逆");
 
+        NowUserDir = nowPosi;
+
+        const prevLetter = prevLocation_g.charAt(0);
+        const prevNumber = parseInt(prevLocation_g.substring(1));
+        const nowLetter = document
+          .querySelector(".pnlm-title-box")
+          .textContent.charAt(0);
+        const nowNumber = parseInt(
+          document.querySelector(".pnlm-title-box").textContent.substring(1)
+        );
+
+        //キーが存在するか確認
+        if (
+          routeMap[nowPosi + prevLocation_g.charAt(0)] != undefined ||
+          routeMap[prevLocation_g.charAt(0) + nowPosi] != undefined ||
+          prevLocation_g.charAt(0) == nowPosi
+        ) {
+          // 文字が異なる場合の処理
           if (
-            isReturn(
-              document.querySelector(".pnlm-title-box").textContent,
-              true,
-              routeMaxId.get(nowPosi)
-            )
+            prevLetter !== nowLetter ||
+            routeMap[prevLocation_g.charAt(0) + nowPosi]
           ) {
-            console.log(
-              180 +
-                (adjustImg.get(
-                  document
-                    .querySelector(".pnlm-title-box")
-                    .textContent.charAt(0)
-                ) == undefined
-                  ? 0
-                  : adjustImg.get(
-                      document
-                        .querySelector(".pnlm-title-box")
-                        .textContent.charAt(0)
-                    )),
-              Range.changeCoordinateForPannellum(
-                180 +
-                  adjustImg.get(
-                    document
-                      .querySelector(".pnlm-title-box")
-                      .textContent.charAt(0)
-                  ) ==
-                  undefined
-                  ? 0
-                  : adjustImg.get(
-                      document
-                        .querySelector(".pnlm-title-box")
-                        .textContent.charAt(0)
-                    )
-              )
-            );
-            viewer.setYaw(
-              Range.changeCoordinateForPannellum(
-                180 +
-                  (adjustImg.get(
-                    document
-                      .querySelector(".pnlm-title-box")
-                      .textContent.charAt(0)
-                  ) == undefined
-                    ? 0
-                    : adjustImg.get(
-                        document
-                          .querySelector(".pnlm-title-box")
-                          .textContent.charAt(0)
-                      ))
-              )
-            );
+            console.log("DIF戻っています");
+            viewer.setYaw(Range.changeCoordinateForPannellum(180));
           } else {
-            viewer.setYaw(
-              Range.changeCoordinateForPannellum(
-                adjustImg.get(
-                  document
-                    .querySelector(".pnlm-title-box")
-                    .textContent.charAt(0)
-                ) == undefined
-                  ? 0
-                  : adjustImg.get(
-                      document
-                        .querySelector(".pnlm-title-box")
-                        .textContent.charAt(0)
-                    )
+            if (
+              isReturn(
+                document.querySelector(".pnlm-title-box").textContent,
+                false,
+                routeMaxId.get(nowPosi)
               )
-            );
+            ) {
+              console.log("SAME戻っています");
+              viewer.setYaw(180);
+            }
           }
-        }
+        } else console.log("routeMapを指定してください。");
+        //   if()
+        // if (!reverseArray.has(nowPosi)) {
+        //   adjustYaw = reverseArray.get(nowPosi);
+        //   if (
+        //     isReturn(
+        //       document.querySelector(".pnlm-title-box").textContent,
+        //       false,
+        //       -1
+        //     )
+        //   ) {
+        //     viewer.setYaw(
+        //       Range.changeCoordinateForPannellum(
+        //         180 +
+        //           (adjustImg.get(
+        //             document
+        //               .querySelector(".pnlm-title-box")
+        //               .textContent.charAt(0)
+        //           ) == undefined
+        //             ? 0
+        //             : adjustImg.get(
+        //                 document
+        //                   .querySelector(".pnlm-title-box")
+        //                   .textContent.charAt(0)
+        //               ))
+        //       )
+        //     );
+        //   } else {
+        //     viewer.setYaw(
+        //       Range.changeCoordinateForPannellum(
+        //         adjustImg.get(
+        //           document
+        //             .querySelector(".pnlm-title-box")
+        //             .textContent.charAt(0)
+        //         ) == undefined
+        //           ? 0
+        //           : adjustImg.get(
+        //               document
+        //                 .querySelector(".pnlm-title-box")
+        //                 .textContent.charAt(0)
+        //             )
+        //       )
+        //     );
+        //   }
+        // } else {
+        //   if (
+        //     isReturn(
+        //       document.querySelector(".pnlm-title-box").textContent,
+        //       true,
+        //       routeMaxId.get(nowPosi)
+        //     )
+        //   ) {
+        //     console.log(
+        //       180 +
+        //         (adjustImg.get(
+        //           document
+        //             .querySelector(".pnlm-title-box")
+        //             .textContent.charAt(0)
+        //         ) == undefined
+        //           ? 0
+        //           : adjustImg.get(
+        //               document
+        //                 .querySelector(".pnlm-title-box")
+        //                 .textContent.charAt(0)
+        //             )),
+        //       Range.changeCoordinateForPannellum(
+        //         180 +
+        //           adjustImg.get(
+        //             document
+        //               .querySelector(".pnlm-title-box")
+        //               .textContent.charAt(0)
+        //           ) ==
+        //           undefined
+        //           ? 0
+        //           : adjustImg.get(
+        //               document
+        //                 .querySelector(".pnlm-title-box")
+        //                 .textContent.charAt(0)
+        //             )
+        //       )
+        //     );
+        //     viewer.setYaw(
+        //       Range.changeCoordinateForPannellum(
+        //         180 +
+        //           (adjustImg.get(
+        //             document
+        //               .querySelector(".pnlm-title-box")
+        //               .textContent.charAt(0)
+        //           ) == undefined
+        //             ? 0
+        //             : adjustImg.get(
+        //                 document
+        //                   .querySelector(".pnlm-title-box")
+        //                   .textContent.charAt(0)
+        //               ))
+        //       )
+        //     );
+        //   } else {
+        //     viewer.setYaw(
+        //       Range.changeCoordinateForPannellum(
+        //         adjustImg.get(
+        //           document
+        //             .querySelector(".pnlm-title-box")
+        //             .textContent.charAt(0)
+        //         ) == undefined
+        //           ? 0
+        //           : adjustImg.get(
+        //               document
+        //                 .querySelector(".pnlm-title-box")
+        //                 .textContent.charAt(0)
+        //             )
+        //       )
+        //     );
+        //   }
+        // }
 
         await waitForLoadAndExecute();
 
@@ -487,7 +571,7 @@ function isReturn(now, reverse, maxPosiId) {
         return true;
       }
     }
-
+    console.log(prevLocation_g, now);
     // 文字が同じ場合の処理
     if (prevLocation_g < now) {
       return false;
@@ -531,12 +615,15 @@ async function getRoteStteing() {
 
         // maxIdの設定
         routeMaxId.set(route, setting.maxId);
+
+        //map_userの向いている方向を設定
+        RouteUserDir.set(route, setting.mapdirection);
       });
 
       // 結果の確認
-      console.log("reverseArray:", reverseArray);
-      console.log("adjustImg:", adjustImg);
-      console.log("routeMaxId:", routeMaxId);
+      // console.log("reverseArray:", reverseArray);
+      // console.log("adjustImg:", adjustImg);
+      // console.log("routeMaxId:", routeMaxId);
     })
     .catch((error) => {
       console.error("Error loading the JSON file:", error);
@@ -697,6 +784,7 @@ async function handleMouseUp() {
   panoramaDiv.removeEventListener("mouseup", handleMouseUp);
 
   try {
+    await addEventMoveBtn();
     if (!isDragging) {
       // パノラマ内のクリックにのみ反応
       if (isCursorInPanorama(cursorX_g, cursorY_g)) {
@@ -709,7 +797,7 @@ async function handleMouseUp() {
         var isExistLocation = await move(ManageMoveRange.getMovePlace(yaw_g));
 
         //移動地点にて再度移動ボタンのリスナー追加 + ボタン非表示
-        await addEventMoveBtn();
+
         //移動先が設定されていない場合
         if (!isExistLocation) {
           alert("移動先が設定されていません");
@@ -733,6 +821,7 @@ let isDragging = false;
 window.onload = async () => {
   //pannelumの読み込みに時間がかかるのでsleep関数ないどボタンの取得が毎回0になる
   await sleep(100);
+
   //移動ボタンの消去
   waitForLoadAndExecute();
   //移動ボタンにリスナーの追加
@@ -818,7 +907,7 @@ async function move(location) {
       if (span.textContent === location) {
         // 擬似的に該当の移動ボタンをクリックする
         div.click();
-        await sleep(1000);
+
         console.log(
           document.querySelector(".pnlm-title-box").textContent,
           "に移動しました。"
@@ -2106,7 +2195,10 @@ window.pannellum = (function (E, g, p) {
               (b.vOffset = -180 * ((l + h / 2) / g - 0.5)),
             null !== k &&
               0 > aa.indexOf("northOffset") &&
-              ((b.northOffset = k), !1 !== b.compass && (b.compass = !0)),
+              ((b.northOffset = k),
+              // !1 !== b.compass && (b.compass = !0)),
+              b.compass == true),
+            //b.compassを常にtrueにしてみる　バグったらごめんなさい
             null !== m &&
               null !== e &&
               (0 > aa.indexOf("horizonPitch") && (b.horizonPitch = m),
@@ -2671,14 +2763,22 @@ window.pannellum = (function (E, g, p) {
         );
         b.hotSpots.forEach(Ca);
         //コンパスの向きを計算
-        const user_vector = -(-b.yaw - b.northOffset);
+        const user_vector = -(
+          -b.yaw -
+          b.northOffset -
+          RouteUserDir.get(NowUserDir)
+        );
         var map_user = document.getElementById("map_user");
         // b.compass &&
         //   ((Ia.style.transform = "rotate(" + user_vector + "deg)"),
         //   (Ia.style.webkitTransform =
         //     "rotate(" + user_vector + "deg)"));
-        b.compass &&
-          (map_user.style.transform = "rotate(" + user_vector + "deg)");
+        // b.compass &&
+        //   (map_user.style.transform = "rotate(" + user_vector + "deg)");
+        // b.compass &&
+        //   (console.log("コンパスの向きを変更しました"));
+        //画像の中心位置変更によってb.compass != trueになってしまったため、常時コンパス機能をオンに
+        map_user.style.transform = "rotate(" + user_vector + "deg)";
       }
     }
     function Y(a, b, c, d) {
