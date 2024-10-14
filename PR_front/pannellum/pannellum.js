@@ -4,46 +4,46 @@
 const routeMap = {
   AB: { reverse: true },
   AC: { reverse: false },
-  BC: { reverse: false},
-  BD: { reverse: false},
-  BZ: { reverse: false},
-  BO: { reverse: false},
-  DF: { reverse: true},
-  DL: { reverse: false},
-  FL: { reverse: false},
-  LU: { reverse: false},
-  LW: { reverse: false},
-  UW: { reverse: false},
-  UK: { reverse: true},
-  UQ: { reverse: true},
-  UR: { reverse: false},
-  RQ: { reverse: false},
-  KR: { reverse: false},
-  TR: { reverse: false},
-  TQ: { reverse: false},
-  TP: { reverse: false},
-  PW: { reverse: true}, //?
-  PV: { reverse: true}, //?
-  TX: { reverse: false},
-  WX: { reverse: true},
-  PX: { reverse: false}, //?
-  PZ: { reverse: true}, //?
-  PO: { reverse: false},
-  PN: { reverse: false},
-  NA: { reverse: false},
-  NM: { reverse: true},
-  MJ: { reverse: false},
-  MI: { reverse: true},
-  IC: { reverse: false}, //?
-  CE: { reverse: false},
-  EF: { reverse: false},
-  EG: { reverse: false},
-  FG: { reverse: false},
-  JH: { reverse: true},
-  JK: { reverse: false},
-  HK: { reverse: false},
-  GI: { reverse: false},
-  GJ: { reverse: true} //?
+  BC: { reverse: false },
+  BD: { reverse: false },
+  BZ: { reverse: false },
+  BO: { reverse: false },
+  DF: { reverse: true },
+  DL: { reverse: false },
+  FL: { reverse: false },
+  LU: { reverse: false },
+  LW: { reverse: false },
+  UW: { reverse: false },
+  UK: { reverse: true },
+  UQ: { reverse: true },
+  UR: { reverse: false },
+  RQ: { reverse: false },
+  KR: { reverse: false },
+  TR: { reverse: false },
+  TQ: { reverse: false },
+  TP: { reverse: false },
+  PW: { reverse: true }, //?
+  PV: { reverse: true }, //?
+  TX: { reverse: false },
+  WX: { reverse: true },
+  PX: { reverse: false }, //?
+  PZ: { reverse: true }, //?
+  PO: { reverse: false },
+  PN: { reverse: false },
+  NA: { reverse: false },
+  NM: { reverse: true },
+  MJ: { reverse: false },
+  MI: { reverse: true },
+  IC: { reverse: false }, //?
+  CE: { reverse: false },
+  EF: { reverse: false },
+  EG: { reverse: false },
+  FG: { reverse: false },
+  JH: { reverse: true },
+  JK: { reverse: false },
+  HK: { reverse: false },
+  GI: { reverse: false },
+  GJ: { reverse: true }, //?
 };
 //Map_Userが向く方向をルートごとに設定するための値
 var RouteUserDir = new Map();
@@ -342,7 +342,7 @@ async function waitForLoadAndExecute() {
     const interval = setInterval(() => {
       if (isLoadComplete) {
         clearInterval(interval);
-        // hiddenMoveBtn();
+        hiddenMoveBtn();
         resolve();
       }
     }, 100); // 100msごとにチェック
@@ -365,7 +365,7 @@ async function hiddenMoveBtn() {
 
 async function addEventMoveBtn() {
   // console.log("移動ボタンにリスナーを追加しました。");
-  await sleep(1000);
+
   // console.log("------------移動ボタン一覧------------");
   await getRoteStteing();
   // //ぱねりうむの移動ボタンにリスナー追加
@@ -379,15 +379,14 @@ async function addEventMoveBtn() {
       ManageMoveRange.isProcessing = true;
 
       try {
-        await sleep(800);
-
         //ルートによって方向が違うので補正分
         var adjustYaw = 0;
-
+        await sleep(100); //これ消すと動かない
+        console.log(document.querySelector(".pnlm-title-box").textContent);
         var nowPosi = document
           .querySelector(".pnlm-title-box")
           .textContent.charAt(0);
-        console.log(nowPosi, prevLocation_g);
+
         NowUserDir = nowPosi;
 
         const prevLetter = prevLocation_g.charAt(0);
@@ -405,12 +404,12 @@ async function addEventMoveBtn() {
           routeMap[prevLocation_g.charAt(0) + nowPosi] != undefined ||
           prevLocation_g.charAt(0) == nowPosi
         ) {
-          console.log("aaa");
           // 文字が異なる場合の処理
           if (
             prevLetter !== nowLetter ||
             routeMap[prevLocation_g.charAt(0) + nowPosi]
           ) {
+            console.log("DIF戻っています");
             viewer.setYaw(Range.changeCoordinateForPannellum(180));
           } else {
             if (
@@ -420,6 +419,7 @@ async function addEventMoveBtn() {
                 routeMaxId.get(nowPosi)
               )
             ) {
+              console.log("SAME戻っています");
               viewer.setYaw(180);
             }
           }
@@ -571,7 +571,7 @@ function isReturn(now, reverse, maxPosiId) {
         return true;
       }
     }
-
+    console.log(prevLocation_g, now);
     // 文字が同じ場合の処理
     if (prevLocation_g < now) {
       return false;
@@ -617,13 +617,13 @@ async function getRoteStteing() {
         routeMaxId.set(route, setting.maxId);
 
         //map_userの向いている方向を設定
-        RouteUserDir.set(route, setting.mapdirection); 
+        RouteUserDir.set(route, setting.mapdirection);
       });
 
       // 結果の確認
-      console.log("reverseArray:", reverseArray);
-      console.log("adjustImg:", adjustImg);
-      console.log("routeMaxId:", routeMaxId);
+      // console.log("reverseArray:", reverseArray);
+      // console.log("adjustImg:", adjustImg);
+      // console.log("routeMaxId:", routeMaxId);
     })
     .catch((error) => {
       console.error("Error loading the JSON file:", error);
@@ -907,7 +907,7 @@ async function move(location) {
       if (span.textContent === location) {
         // 擬似的に該当の移動ボタンをクリックする
         div.click();
-        await sleep(1000);
+
         console.log(
           document.querySelector(".pnlm-title-box").textContent,
           "に移動しました。"
@@ -2195,10 +2195,10 @@ window.pannellum = (function (E, g, p) {
               (b.vOffset = -180 * ((l + h / 2) / g - 0.5)),
             null !== k &&
               0 > aa.indexOf("northOffset") &&
-              ((b.northOffset = k), 
+              ((b.northOffset = k),
               // !1 !== b.compass && (b.compass = !0)),
               b.compass == true),
-              //b.compassを常にtrueにしてみる　バグったらごめんなさい
+            //b.compassを常にtrueにしてみる　バグったらごめんなさい
             null !== m &&
               null !== e &&
               (0 > aa.indexOf("horizonPitch") && (b.horizonPitch = m),
@@ -2763,7 +2763,11 @@ window.pannellum = (function (E, g, p) {
         );
         b.hotSpots.forEach(Ca);
         //コンパスの向きを計算
-        const user_vector = -(-b.yaw - b.northOffset - RouteUserDir.get(NowUserDir));
+        const user_vector = -(
+          -b.yaw -
+          b.northOffset -
+          RouteUserDir.get(NowUserDir)
+        );
         var map_user = document.getElementById("map_user");
         // b.compass &&
         //   ((Ia.style.transform = "rotate(" + user_vector + "deg)"),
@@ -2774,7 +2778,7 @@ window.pannellum = (function (E, g, p) {
         // b.compass &&
         //   (console.log("コンパスの向きを変更しました"));
         //画像の中心位置変更によってb.compass != trueになってしまったため、常時コンパス機能をオンに
-        map_user.style.transform = "rotate(" + user_vector + "deg)"
+        map_user.style.transform = "rotate(" + user_vector + "deg)";
       }
     }
     function Y(a, b, c, d) {
