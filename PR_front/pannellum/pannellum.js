@@ -3166,6 +3166,9 @@ window.pannellum = (function (E, g, p) {
       q.load.box.style.display = "inline";
       oa();
     }
+
+    //ここがloadscene
+
     function y(a, c, d, h, g) {
       G || (g = !0);
       G = !1;

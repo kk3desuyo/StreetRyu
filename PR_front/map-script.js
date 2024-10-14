@@ -419,6 +419,18 @@ function toggleSection(sectionId) {
   }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+  const menuLinks = document.querySelectorAll('.submenu a');  // メニュー内のリンクを取得
+  menuLinks.forEach(link => {
+      link.addEventListener('click', function(event) {
+          event.preventDefault();  // デフォルトのリンク動作を無効化
+          const sceneId = this.getAttribute('data-scene-id');  // data属性からシーンIDを取得
+          viewer.loadScene(sceneId);  // Pannellumのシーンをロード
+      });
+  });
+});
+
+
 //ここからmap
 
 (function ($) {
