@@ -93,7 +93,7 @@
       "positionId": "B0",
       "moveSets": {
         "straight": false,
-        "ranges": [-45, 45, -45, -90, -90, -315, 45, 135],
+        "ranges": [-45, 45, -135, -45, 135, 225, 45, 135],
         "locations": ["B1", "D0", "Z0", "O5"],
         "map": [62.2, 65.5]
       }
@@ -129,8 +129,8 @@
       "positionId": "C0",
       "moveSets": {
         "straight": false,
-        "ranges": [0, 90, 90, 270],
-        "locations": ["B1", "A6"],
+        "ranges": [-90, 90, 90, 270],
+        "locations": ["C1", "A6"],
         "map": [72.2, 67.5]
       }
     },
@@ -138,7 +138,7 @@
       "positionId": "C1",
       "moveSets": {
         "straight": false,
-        "ranges": [-45, 90, 90, 135, -135, -45],
+        "ranges": [-45, 90, 90, 225, -135, -45],
         "locations": ["I4", "C0", "E0"],
         "map": [72.2, 67.5]
       }
@@ -147,7 +147,7 @@
       "positionId": "D0",
       "moveSets": {
         "straight": false,
-        "ranges": [-45, 90, 90, 180, -45, -180],
+        "ranges": [-45, 90, 90, 180, 180, 315],
         "locations": ["D1", "B1", "B0"],
         "map": [63.2, 62.5]
       }
@@ -1146,7 +1146,7 @@
     "positionId": "N8",
     "moveSets": {
       "straight": false,
-      "ranges": [-90, -20, -20, 90, 90, 180],
+      "ranges": [-90, -20, -20, 90, 90, 270],
       "locations": ["A0", "M10", "N7"],
       "map": [72.2, 67.5]
     }
@@ -1156,7 +1156,7 @@
     "moveSets": {
       "straight": false,
       "ranges": [-45, 45, 45, 135, 135, 225],
-      "locations": ["O1", "N8", "P9"],
+      "locations": ["O1", "N0", "P9"],
       "map": [72.2, 67.5]
     }
   },
