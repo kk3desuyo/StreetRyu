@@ -4176,7 +4176,7 @@ await moveSet();
 
 async function moveSet() {
     //pannelumの読み込みに時間がかかるのでsleep関数ないどボタンの取得が毎回0になる
-    await sleep(1000);
+    await sleep(100);
 
     //移動ボタンの消去
     waitForLoadAndExecute();
