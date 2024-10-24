@@ -134,7 +134,6 @@ class ManageMoveRange {
   }
   //現在の地点を取得してその地点に対する範囲と移動先のデータを取得
   static async getPosiInfoByLocation(location) {
-    console.log(this.ranges, this.locations);
     var nowLocationInfo = this.posiInfos.positions.find(
       (position) => position.positionId === location
     );
@@ -148,7 +147,6 @@ class ManageMoveRange {
     //現在地のマップ
     for (let i = 0; i < nowLocationInfo.moveSets.map.length; i++)
       this.map[i] = nowLocationInfo.moveSets.map[i];
-    // console.log(this.map);
     //現在地更新(ここで呼び出すべきかはわからん)
     MapCurrentUpDate(this.map);
 
@@ -157,21 +155,13 @@ class ManageMoveRange {
 
     //何個目の範囲を処理しているかの数をカウント
     var countProcessRange = 0;
-    // console.log("座標情報を取得しました:", array, this.locations);
     for (let i = 0; i < array.length; i += 2) {
       var splitedRanges = this.splitRange(array[i], array[i + 1]);
 
       countProcessRange++;
       // 分割する場合には地点を一つ増やす
       if (splitedRanges.length == 2) {
-        // console.log(
-        //   countProcessRange,
-        //   "番目を複製します。",
-        //   "複製前:",
-        //   this.locations
-        // );
-
-        //この部分深いコピーをしないと、バグるので注意
+        // この部分深いコピーをしないと、バグるので注意
         // 深いコピーを作成
         let newLocations = JSON.parse(JSON.stringify(this.locations));
         newLocations.splice(
@@ -180,8 +170,6 @@ class ManageMoveRange {
           this.locations[countProcessRange - 1]
         );
         this.locations = newLocations;
-
-        // console.log(this.locations);
       }
 
       for (const range of splitedRanges) {
@@ -193,16 +181,13 @@ class ManageMoveRange {
   }
   //180度越えの場合には二つの範囲に分割
   static splitRange(yawSmall, yawLarge) {
-    // console.log("spilit");
     yawSmall = Range.changeCoordinateForPannellum(yawSmall);
     yawLarge = Range.changeCoordinateForPannellum(yawLarge);
 
     if (yawSmall <= yawLarge) {
-      // console.log("分割なし");
       // 範囲が連続している場合
       return [[yawSmall, yawLarge]];
     } else {
-      console.log("分割しました");
       // -180度と180度を跨ぐ場合
       return [
         [-180, yawLarge],
@@ -211,75 +196,17 @@ class ManageMoveRange {
     }
   }
   //移動範囲の設定を行う関数
-  // static moveSetting(location) {
-  //   return new Promise((resolve, reject) => {
-  //     try {
-  //       prevLocation_g = location;
-  //       // 初期化
-  //       this.ranges = [];
-  //       this.locations = [];
-  //       console.log(location, "の移動設定をします。");
-
-  //       // データの取得と静的変数への代入
-  //       // 非同期処理の例としてsetTimeoutを使用
-  //       setTimeout(() => {
-  //         this.getPosiInfoByLocation(location);
-  //         console.log(
-  //           location,
-  //           "の移動設定情報は",
-  //           "ranges:",
-  //           this.ranges,
-  //           "location:",
-  //           this.locations
-  //         );
-  //         resolve();
-  //       }, 1); // 例として1秒の遅延を追加
-  //     } catch (error) {
-  //       reject(error);
-  //     }
-  //   });
-  // }
-  // static moveSetting(location) {
-  //   prevLocation_g = location;
-  //   //初期化
-  //   this.ranges = [];
-  //   this.locations = [];
-  //   console.log(location, "の移動設定をします。");
-  //   //データの取得と静的変数への代入
-  //   this.getPosiInfoByLocation(location);
-
-  //   console.log(
-  //     location,
-  //     "の移動設定情報は",
-  //     "ranges:",
-  //     this.ranges,
-  //     "location:",
-  //     this.locations
-  //   );
-  //   ManageMoveRange.isProcessing = false;
-  // }
   static async moveSetting(location) {
     return new Promise(async (resolve, reject) => {
       // asyncを追加
       try {
-        // console.log("移動設定開始");
         prevLocation_g = location;
         // 初期化
         this.ranges = [];
         this.locations = [];
-        // console.log(location, "の移動設定をします。");
 
         // getPosiInfoByLocationを非同期にしてawaitで待機
         await this.getPosiInfoByLocation(location); // async処理の完了を待機
-
-        // console.log(
-        //   location,
-        //   "の移動設定情報は",
-        //   "ranges:",
-        //   this.ranges,
-        //   "locations:",
-        //   this.locations
-        // );
 
         // 非同期処理が完了したことを示す
         resolve();
@@ -294,7 +221,6 @@ class ManageMoveRange {
 
   //クリックした位置の移動先を計算
   static getMovePlace(clickYaw) {
-    // console.log("範囲設定:", this.ranges, "地点", this.locations);
     for (var i = 0; i < this.ranges.length; i++) {
       //範囲内にあるかの計算
       if (
@@ -365,15 +291,11 @@ async function hiddenMoveBtn() {
 
 
 async function addEventMoveBtn() {
-  // console.log("移動ボタンにリスナーを追加しました。");
-
-  // console.log("------------移動ボタン一覧------------");
   await getRoteStteing();
   // //ぱねりうむの移動ボタンにリスナー追加
   document.querySelectorAll("div.pnlm-scene").forEach((div) => {
     div.addEventListener("click", async function () {
       if (!isLoadComplete) {
-        console.log("Load not complete, ignoring click");
         return; // Prevent the click event from being processed
       }
 
@@ -383,7 +305,6 @@ async function addEventMoveBtn() {
         //ルートによって方向が違うので補正分
         var adjustYaw = 0;
         await sleep(100); //これ消すと動かない
-        console.log(document.querySelector(".pnlm-title-box").textContent);
         var nowPosi = document
           .querySelector(".pnlm-title-box")
           .textContent.charAt(0);
@@ -409,14 +330,12 @@ async function addEventMoveBtn() {
 
           // routeMapにkey1があればそれを使い、なければkey2を使う
           const routeValue = routeMap[key1] || routeMap[key2];
-          console.log("xxxxxxxx"+routeMap[routeValue])
 
           // 文字が異なる場合の処理
           if (
             
             routeMap[routeValue]
           ) {
-            console.log("reverseありの戻っています");
             viewer.setYaw(Range.changeCoordinateForPannellum(180));
           } else {
             if (
@@ -426,129 +345,14 @@ async function addEventMoveBtn() {
                 routeMaxId.get(nowPosi)
               )
             ) {
-              console.log("reverseなしの戻っています");
               viewer.setYaw(180);
             }
             else {
-              console.log("reverseなしの戻っていません");
               viewer.setYaw(0);
             }
           }
-        } else console.log("routeMapを指定してください。");
-        //   if()
-        // if (!reverseArray.has(nowPosi)) {
-        //   adjustYaw = reverseArray.get(nowPosi);
-        //   if (
-        //     isReturn(
-        //       document.querySelector(".pnlm-title-box").textContent,
-        //       false,
-        //       -1
-        //     )
-        //   ) {
-        //     viewer.setYaw(
-        //       Range.changeCoordinateForPannellum(
-        //         180 +
-        //           (adjustImg.get(
-        //             document
-        //               .querySelector(".pnlm-title-box")
-        //               .textContent.charAt(0)
-        //           ) == undefined
-        //             ? 0
-        //             : adjustImg.get(
-        //                 document
-        //                   .querySelector(".pnlm-title-box")
-        //                   .textContent.charAt(0)
-        //               ))
-        //       )
-        //     );
-        //   } else {
-        //     viewer.setYaw(
-        //       Range.changeCoordinateForPannellum(
-        //         adjustImg.get(
-        //           document
-        //             .querySelector(".pnlm-title-box")
-        //             .textContent.charAt(0)
-        //         ) == undefined
-        //           ? 0
-        //           : adjustImg.get(
-        //               document
-        //                 .querySelector(".pnlm-title-box")
-        //                 .textContent.charAt(0)
-        //             )
-        //       )
-        //     );
-        //   }
-        // } else {
-        //   if (
-        //     isReturn(
-        //       document.querySelector(".pnlm-title-box").textContent,
-        //       true,
-        //       routeMaxId.get(nowPosi)
-        //     )
-        //   ) {
-        //     console.log(
-        //       180 +
-        //         (adjustImg.get(
-        //           document
-        //             .querySelector(".pnlm-title-box")
-        //             .textContent.charAt(0)
-        //         ) == undefined
-        //           ? 0
-        //           : adjustImg.get(
-        //               document
-        //                 .querySelector(".pnlm-title-box")
-        //                 .textContent.charAt(0)
-        //             )),
-        //       Range.changeCoordinateForPannellum(
-        //         180 +
-        //           adjustImg.get(
-        //             document
-        //               .querySelector(".pnlm-title-box")
-        //               .textContent.charAt(0)
-        //           ) ==
-        //           undefined
-        //           ? 0
-        //           : adjustImg.get(
-        //               document
-        //                 .querySelector(".pnlm-title-box")
-        //                 .textContent.charAt(0)
-        //             )
-        //       )
-        //     );
-        //     viewer.setYaw(
-        //       Range.changeCoordinateForPannellum(
-        //         180 +
-        //           (adjustImg.get(
-        //             document
-        //               .querySelector(".pnlm-title-box")
-        //               .textContent.charAt(0)
-        //           ) == undefined
-        //             ? 0
-        //             : adjustImg.get(
-        //                 document
-        //                   .querySelector(".pnlm-title-box")
-        //                   .textContent.charAt(0)
-        //               ))
-        //       )
-        //     );
-        //   } else {
-        //     viewer.setYaw(
-        //       Range.changeCoordinateForPannellum(
-        //         adjustImg.get(
-        //           document
-        //             .querySelector(".pnlm-title-box")
-        //             .textContent.charAt(0)
-        //         ) == undefined
-        //           ? 0
-        //           : adjustImg.get(
-        //               document
-        //                 .querySelector(".pnlm-title-box")
-        //                 .textContent.charAt(0)
-        //             )
-        //       )
-        //     );
-        //   }
-        // }
+        } else {}
+
 
         await waitForLoadAndExecute();
 
@@ -558,7 +362,6 @@ async function addEventMoveBtn() {
       } catch (error) {
         console.error("Error", error);
       } finally {
-        // console.log("Processing ended:", ManageMoveRange.isProcessing);
         ManageMoveRange.isProcessing = false;
       }
     });
@@ -567,7 +370,6 @@ async function addEventMoveBtn() {
 //戻っている場合にはtrueを返却
 
 function isReturn(now, reverse, maxPosiId) {
-  // console.log("prev", prevLocation_g, "now:", now);
   const prevLetter = prevLocation_g.charAt(0);
   
   const nowLetter = now.charAt(0);
@@ -582,8 +384,6 @@ function isReturn(now, reverse, maxPosiId) {
         return true;
       }
     }
-    console.log(prevLocation_g, now);
-    // 文字が同じ場合の処理
     if (prevLocation_g < now) {
       return false;
     } else {
@@ -631,10 +431,6 @@ async function getRoteStteing() {
         RouteUserDir.set(route, setting.mapdirection);
       });
 
-      // 結果の確認
-      console.log("reverseArray:", reverseArray);
-      // console.log("adjustImg:", adjustImg);
-      // console.log("routeMaxId:", routeMaxId);
     })
     .catch((error) => {
       console.error("Error loading the JSON file:", error);
@@ -645,7 +441,6 @@ async function getRoteStteing() {
 
 //矢印画像の方向を移動する方向に補正する関数
 function adjustArrowImg() {
-  // console.log(ManageMoveRange.locations);
   //どの移動ボタンに向くべきなのかを計算
   //地点名から配列のインデックスを取得し、その地点の範囲を検索
   // 対象の location のインデックスをすべて取得
@@ -655,6 +450,7 @@ function adjustArrowImg() {
       indices.push(i);
     }
   }
+
 
   // インデックスに対応する ranges を取得
   let ranges = indices.map((index) => ManageMoveRange.ranges[index]);

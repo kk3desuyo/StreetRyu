@@ -1,5 +1,5 @@
 ﻿var viewer;
-firstSceneId_g = "A6";
+firstSceneId_g = "A0";
 const JSONFILEPATH = "./positionInfos.json";
 // JSONファイルからデータを読み込む
 fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
