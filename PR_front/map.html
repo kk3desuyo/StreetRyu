@@ -12,11 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap" rel="stylesheet">
-
-
 </head>
 
-  <body>
+<body>
     <div id="panorama"></div>
     <div class="menu">
         <img src="image/logos/menu-icon.png" alt="Menu" onclick="toggleMenu()">
@@ -28,7 +26,7 @@
                 <p class="logo-text">STREET RYU</p>
             </div>
             <a href="index.html" class="top-page">TOP PAGE</a>
-            <div class="menu-section">
+            <div class="menu-section" id="buildings-section">
                 <h3 onclick="toggleSection('buildings')">
                     Buildings <span class="arrow">▸</span>
                 </h3>
@@ -37,8 +35,7 @@
                     <a href="#" data-scene-id="B0">2号館</a>
                     <a href="#" data-scene-id="C1">3号館</a>
                     <a href="#" data-scene-id="G4">4号館</a>
-                    <a href="#" data-scene-id="T0">5号館</a> 
-                    <!-- 5号館T1でも可 -->
+                    <a href="#" data-scene-id="T0">5号館</a>
                     <a href="#" data-scene-id="Z1">6号館</a>
                     <a href="#" data-scene-id="R6">7号館</a>
                     <a href="#" data-scene-id="Z7">8号館</a>
@@ -47,7 +44,7 @@
                     <a href="#" data-scene-id="H0">第2実験棟</a>
                 </div>
             </div>
-            <div class="menu-section">
+            <div class="menu-section" id="restaurants-section">
                 <h3 onclick="toggleSection('restaurants')">
                     Restaurants <span class="arrow">▸</span>
                 </h3>
@@ -55,7 +52,7 @@
                     <a href="#" data-scene-id="W8">青志館・青雲館</a>
                 </div>
             </div>
-            <div class="menu-section">
+            <div class="menu-section" id="convenience-section">
                 <h3 onclick="toggleSection('convenience')">
                     Convenience store <span class="arrow">▸</span>
                 </h3>
@@ -64,7 +61,7 @@
                     <a href="#" data-scene-id="W8">ファミリーマート</a>
                 </div>
             </div>
-            <div class="menu-section">
+            <div class="menu-section" id="sports-section">
                 <h3 onclick="toggleSection('sports')">
                     Sports <span class="arrow">▸</span>
                 </h3>
@@ -74,7 +71,7 @@
                     <a href="#" data-scene-id="Z10">多目的グラウンド</a>
                 </div>
             </div>
-            <div class="menu-section">
+            <div class="menu-section" id="others-section">
                 <h3 onclick="toggleSection('others')">
                     Other buildings <span class="arrow">▸</span>
                 </h3>
@@ -92,17 +89,218 @@
     </div>
     <img id="arrowButtonImg" src="image/arrow.png" alt="矢印" />
 
-    <!-- ここから作成始め -->
     <div class="map_window">
         <a href="image\map\map.png" class="overlay-zoombox" id="test_zoom"><img id="map_zoom" src="image\map\map.png" alt="マップ"/></a>
         <img id="map_current" src="image\map\map.png" alt="マップ" />
-        <!-- aタグの画像が拡大される画像.imgタグの画像がデフォルトで表示されている画像　ワープ機能つけるならaタグの画像 -->
         <img id="map_user" src="image\map\user_arrow2.png" alt="ユーザ">
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     <script src="map-script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuSections = ['buildings', 'restaurants', 'convenience', 'sports', 'others'];
+            menuSections.forEach(section => {
+                const links = document.querySelectorAll(`#${section} a`);
+                links.forEach(link => {
+                    link.addEventListener('click', function(event) {
+                        document.querySelectorAll("div.pnlm-scene").forEach((div) => {
+    div.addEventListener("click", async function () {
+      if (!isLoadComplete) {
+        console.log("Load not complete, ignoring click");
+        return; // Prevent the click event from being processed
+      }
+
+      ManageMoveRange.isProcessing = true;
+
+      try {
+        //ルートによって方向が違うので補正分
+        var adjustYaw = 0;
+        await sleep(100); //これ消すと動かない
+        console.log(document.querySelector(".pnlm-title-box").textContent);
+        var nowPosi = document
+          .querySelector(".pnlm-title-box")
+          .textContent.charAt(0);
+
+        NowUserDir = nowPosi;
+
+        const prevLetter = prevLocation_g.charAt(0);
+        
+        const nowLetter = document
+          .querySelector(".pnlm-title-box")
+          .textContent.charAt(0);
+   
+
+        //キーが存在するか確認
+        if (
+          routeMap[nowPosi + prevLocation_g.charAt(0)] != undefined ||
+          routeMap[prevLocation_g.charAt(0) + nowPosi] != undefined ||
+          prevLocation_g.charAt(0) == nowPosi
+        ) {
+          // "AB" と "BA" の両方に対応できるようにする
+          const key1 = prevLocation_g.charAt(0) + nowPosi;  // ABのパターン
+          const key2 = nowPosi + prevLocation_g.charAt(0);  // BAのパターン
+
+          // routeMapにkey1があればそれを使い、なければkey2を使う
+          const routeValue = routeMap[key1] || routeMap[key2];
+          console.log("xxxxxxxx"+routeMap[routeValue])
+
+          // 文字が異なる場合の処理
+          if (
+            
+            routeMap[routeValue]
+          ) {
+            console.log("reverseありの戻っています");
+            viewer.setYaw(Range.changeCoordinateForPannellum(180));
+          } else {
+            if (
+              isReturn(
+                document.querySelector(".pnlm-title-box").textContent,
+                false,
+                routeMaxId.get(nowPosi)
+              )
+            ) {
+              console.log("reverseなしの戻っています");
+              viewer.setYaw(180);
+            }
+            else {
+              console.log("reverseなしの戻っていません");
+              viewer.setYaw(0);
+            }
+          }
+        } else console.log("routeMapを指定してください。");
+        //   if()
+        // if (!reverseArray.has(nowPosi)) {
+        //   adjustYaw = reverseArray.get(nowPosi);
+        //   if (
+        //     isReturn(
+        //       document.querySelector(".pnlm-title-box").textContent,
+        //       false,
+        //       -1
+        //     )
+        //   ) {
+        //     viewer.setYaw(
+        //       Range.changeCoordinateForPannellum(
+        //         180 +
+        //           (adjustImg.get(
+        //             document
+        //               .querySelector(".pnlm-title-box")
+        //               .textContent.charAt(0)
+        //           ) == undefined
+        //             ? 0
+        //             : adjustImg.get(
+        //                 document
+        //                   .querySelector(".pnlm-title-box")
+        //                   .textContent.charAt(0)
+        //               ))
+        //       )
+        //     );
+        //   } else {
+        //     viewer.setYaw(
+        //       Range.changeCoordinateForPannellum(
+        //         adjustImg.get(
+        //           document
+        //             .querySelector(".pnlm-title-box")
+        //             .textContent.charAt(0)
+        //         ) == undefined
+        //           ? 0
+        //           : adjustImg.get(
+        //               document
+        //                 .querySelector(".pnlm-title-box")
+        //                 .textContent.charAt(0)
+        //             )
+        //       )
+        //     );
+        //   }
+        // } else {
+        //   if (
+        //     isReturn(
+        //       document.querySelector(".pnlm-title-box").textContent,
+        //       true,
+        //       routeMaxId.get(nowPosi)
+        //     )
+        //   ) {
+        //     console.log(
+        //       180 +
+        //         (adjustImg.get(
+        //           document
+        //             .querySelector(".pnlm-title-box")
+        //             .textContent.charAt(0)
+        //         ) == undefined
+        //           ? 0
+        //           : adjustImg.get(
+        //               document
+        //                 .querySelector(".pnlm-title-box")
+        //                 .textContent.charAt(0)
+        //             )),
+        //       Range.changeCoordinateForPannellum(
+        //         180 +
+        //           adjustImg.get(
+        //             document
+        //               .querySelector(".pnlm-title-box")
+        //               .textContent.charAt(0)
+        //           ) ==
+        //           undefined
+        //           ? 0
+        //           : adjustImg.get(
+        //               document
+        //                 .querySelector(".pnlm-title-box")
+        //                 .textContent.charAt(0)
+        //             )
+        //       )
+        //     );
+        //     viewer.setYaw(
+        //       Range.changeCoordinateForPannellum(
+        //         180 +
+        //           (adjustImg.get(
+        //             document
+        //               .querySelector(".pnlm-title-box")
+        //               .textContent.charAt(0)
+        //           ) == undefined
+        //             ? 0
+        //             : adjustImg.get(
+        //                 document
+        //                   .querySelector(".pnlm-title-box")
+        //                   .textContent.charAt(0)
+        //               ))
+        //       )
+        //     );
+        //   } else {
+        //     viewer.setYaw(
+        //       Range.changeCoordinateForPannellum(
+        //         adjustImg.get(
+        //           document
+        //             .querySelector(".pnlm-title-box")
+        //             .textContent.charAt(0)
+        //         ) == undefined
+        //           ? 0
+        //           : adjustImg.get(
+        //               document
+        //                 .querySelector(".pnlm-title-box")
+        //                 .textContent.charAt(0)
+        //             )
+        //       )
+        //     );
+        //   }
+        // }
+
+        await waitForLoadAndExecute();
+
+        await ManageMoveRange.moveSetting(
+          document.querySelector(".pnlm-title-box").textContent
+        );
+      } catch (error) {
+        console.error("Error", error);
+      } finally {
+        // console.log("Processing ended:", ManageMoveRange.isProcessing);
+        ManageMoveRange.isProcessing = false;
+      }
+    });
+  });
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 
-
-  </body>
 </html>

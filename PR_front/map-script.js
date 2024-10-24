@@ -1,4 +1,5 @@
 ﻿var viewer;
+firstSceneId_g = "A6";
 const JSONFILEPATH = "./positionInfos.json";
 // JSONファイルからデータを読み込む
 fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
@@ -88,7 +89,7 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
     // pannellum viewerを生成
     viewer = pannellum.viewer("panorama", {
       default: {
-        firstScene: "A0",
+        firstScene: firstSceneId_g,
         sceneFadeDuration: 1000,
       },
       scenes: createPannellumScenes(data),

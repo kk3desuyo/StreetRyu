@@ -363,6 +363,7 @@ async function hiddenMoveBtn() {
   }
 }
 
+
 async function addEventMoveBtn() {
   // console.log("移動ボタンにリスナーを追加しました。");
 
@@ -390,13 +391,11 @@ async function addEventMoveBtn() {
         NowUserDir = nowPosi;
 
         const prevLetter = prevLocation_g.charAt(0);
-        const prevNumber = parseInt(prevLocation_g.substring(1));
+        
         const nowLetter = document
           .querySelector(".pnlm-title-box")
           .textContent.charAt(0);
-        const nowNumber = parseInt(
-          document.querySelector(".pnlm-title-box").textContent.substring(1)
-        );
+   
 
         //キーが存在するか確認
         if (
@@ -404,12 +403,20 @@ async function addEventMoveBtn() {
           routeMap[prevLocation_g.charAt(0) + nowPosi] != undefined ||
           prevLocation_g.charAt(0) == nowPosi
         ) {
+          // "AB" と "BA" の両方に対応できるようにする
+          const key1 = prevLocation_g.charAt(0) + nowPosi;  // ABのパターン
+          const key2 = nowPosi + prevLocation_g.charAt(0);  // BAのパターン
+
+          // routeMapにkey1があればそれを使い、なければkey2を使う
+          const routeValue = routeMap[key1] || routeMap[key2];
+          console.log("xxxxxxxx"+routeMap[routeValue])
+
           // 文字が異なる場合の処理
           if (
-            prevLetter !== nowLetter ||
-            routeMap[prevLocation_g.charAt(0) + nowPosi]
+            
+            routeMap[routeValue]
           ) {
-            console.log("DIF戻っています");
+            console.log("reverseありの戻っています");
             viewer.setYaw(Range.changeCoordinateForPannellum(180));
           } else {
             if (
@@ -419,8 +426,12 @@ async function addEventMoveBtn() {
                 routeMaxId.get(nowPosi)
               )
             ) {
-              console.log("SAME戻っています");
+              console.log("reverseなしの戻っています");
               viewer.setYaw(180);
+            }
+            else {
+              console.log("reverseなしの戻っていません");
+              viewer.setYaw(0);
             }
           }
         } else console.log("routeMapを指定してください。");
@@ -558,9 +569,9 @@ async function addEventMoveBtn() {
 function isReturn(now, reverse, maxPosiId) {
   // console.log("prev", prevLocation_g, "now:", now);
   const prevLetter = prevLocation_g.charAt(0);
-  const prevNumber = parseInt(prevLocation_g.substring(1));
+  
   const nowLetter = now.charAt(0);
-  const nowNumber = parseInt(now.substring(1));
+  const nowNumber = parseInt(now.match(/\d+/)[0]);
 
   if (reverse == false) {
     // 文字が異なる場合の処理
@@ -621,7 +632,7 @@ async function getRoteStteing() {
       });
 
       // 結果の確認
-      // console.log("reverseArray:", reverseArray);
+      console.log("reverseArray:", reverseArray);
       // console.log("adjustImg:", adjustImg);
       // console.log("routeMaxId:", routeMaxId);
     })
@@ -828,7 +839,7 @@ window.onload = async () => {
   addEventMoveBtn();
 
   //移動の範囲指定の設定を適用　(引数はデフォルトで表示したい場所を引数に入れてください)
-  ManageMoveRange.moveSetting("A0");
+  ManageMoveRange.moveSetting(firstSceneId_g);
 
   var panoramaDiv = document.getElementById("panorama");
 
@@ -4147,3 +4158,86 @@ window.pannellum = (function (E, g, p) {
 //     },
 //   });
 // };
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const menuSections = ['buildings', 'restaurants', 'convenience', 'sports', 'others'];
+  menuSections.forEach(section => {
+      const links = document.querySelectorAll(`#${section} a`);
+      links.forEach(link => {
+          link.addEventListener('click', async function(event) {
+            console.log("settei")
+await moveSet();
+          });
+      });
+  });
+});
+
+
+async function moveSet() {
+    //pannelumの読み込みに時間がかかるのでsleep関数ないどボタンの取得が毎回0になる
+    await sleep(1000);
+
+    //移動ボタンの消去
+    waitForLoadAndExecute();
+    //移動ボタンにリスナーの追加
+    addEventMoveBtn();
+  
+    //移動の範囲指定の設定を適用　(引数はデフォルトで表示したい場所を引数に入れてください)
+    ManageMoveRange.moveSetting(document
+      .querySelector(".pnlm-title-box")
+      .textContent);
+  
+    var panoramaDiv = document.getElementById("panorama");
+  
+    if (panoramaDiv) {
+      // マウスが押されたとき
+      panoramaDiv.addEventListener("mousedown", function (event) {
+        isDragging = false;
+      });
+  
+      // マウスが離されたとき
+      panoramaDiv.addEventListener("mouseup", handleMouseUp());
+      //カーソルに画像が追従する機能の実装
+      panoramaDiv.addEventListener("mousemove", function (event) {
+        //現在のカーソルにおける移動先を計算
+        moveLocationByCursor = ManageMoveRange.getMovePlace(yaw_g);
+  
+        //移動先の方向に矢印画像を回転
+        adjustArrowImg();
+  
+        isDragging = true;
+        //panoramaDivを起点にして、相対的な座標を取得
+        cursorX_g = event.offsetX;
+        cursorY_g = event.offsetY;
+        //   console.log(cursorX_g, cursorY_g);
+        //人間が直感的に理解できるx,y座標に変換
+        var rect = panoramaDiv.getBoundingClientRect();
+        if (rect) {
+          var x = event.clientX - rect.left + POSIMODIFY_X;
+          var y = event.clientY - rect.top + POSIMODIFY_Y;
+        } else {
+          alert(
+            "カーソル位置の取得に失敗しました。",
+            "ページを再読み込みしてください。"
+          );
+        }
+        var arrowImg = document.getElementById("arrowButtonImg");
+        //パノラマ内の時のみ矢印画像を表示 &カーソルの非表示
+        if (isCursorInPanorama(cursorX_g, cursorY_g)) {
+          // console.log("表示します");
+          panoramaDiv.style.cursor = "";
+          arrowImg.style.display = "block";
+          displayCursorImg(x, y);
+        }
+        //カーソル画面外　or 建物一覧の部分の時
+        else {
+          console.log("非表示にします");
+          //矢印画像を非表示にする処理を記述予定
+          arrowImg.style.display = "none";
+        }
+      });
+    } else {
+      console.error("ページを再読み込みしてください。");
+    }
+}
