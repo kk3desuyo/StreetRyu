@@ -371,7 +371,7 @@ async function addEventMoveBtn() {
 
 function isReturn(now, reverse, maxPosiId) {
   const prevLetter = prevLocation_g.charAt(0);
-  
+  const prevNum = parseInt(prevLocation_g.match(/\d+/)[0]);
   const nowLetter = now.charAt(0);
   const nowNumber = parseInt(now.match(/\d+/)[0]);
 
@@ -384,7 +384,7 @@ function isReturn(now, reverse, maxPosiId) {
         return true;
       }
     }
-    if (prevLocation_g < now) {
+    if (prevNum< nowNumber) {
       return false;
     } else {
       return true;
@@ -400,7 +400,7 @@ function isReturn(now, reverse, maxPosiId) {
     }
 
     // 文字が同じ場合の処理
-    if (prevLocation_g > now) {
+    if (prevNum > nowNumber) {
       return false;
     } else {
       return true;
