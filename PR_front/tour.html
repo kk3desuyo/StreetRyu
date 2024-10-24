@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>準備中</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: rgb(185,3,14);
+            color: white;
+            font-size: 2em;
+            font-family: Arial, sans-serif;
+        }
+
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+            100% { content: '...'; }
+        }
+
+        .dots::after {
+            content: '';
+            animation: dots 2s steps(4, end) infinite;
+        }
+
+        .logo {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 0;
+        }
+
+        .logo img {
+            width: 40%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="logo">
+        <img src="image/logos/street_ryu.png" alt="Logo">
+    </a>
+    <h1>準備中<span class="dots"></span></h1>
+    <br>
+    <p>このページはまだ開発中です。</p>
+    <a href="index.html" style="color: white; font-size: 1em; font-family: Arial, sans-serif;">トップページへ戻る</a>
+</body>
+</html>

@@ -200,7 +200,7 @@
   object-fit: cover;
   text-align: center;
   transform-origin: 69.2% 88.5%;
-  transform: scale(11); /*倍率絶対にいじるな*/
+  transform: scale(11); /*倍率変更不可*/
   z-index: 2;
   pointer-events: none;
 }
@@ -223,7 +223,7 @@ a.overlay-zoombox {
 
 
 /* -- span.loading -------------------------------------------------------------------------------------------- */
-/* マップズームのロード画面関連　いじる必要なし*/
+/* マップズームのロード画面関連　変更の必要なし*/
 span.loading {
 	width: 50px;
 	height: 50px;

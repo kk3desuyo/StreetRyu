@@ -1,3 +1,4 @@
+/* これはマップ座標変更用CSSです。 */
 .map_window {
   position: fixed;
   display: grid; /*grid,place-itemsは変更不可*/

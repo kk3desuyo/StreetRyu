@@ -1,9 +1,9 @@
 // Pannellum 2.5.6, https://github.com/mpetroff/pannellum
 
-// 未テスト データ入力後テストお願いします。
 const routeMap = {
   AB: { reverse: true },
   AC: { reverse: false },
+  AM: { reverse: true },
   BC: { reverse: false },
   BD: { reverse: false },
   BZ: { reverse: false },
@@ -22,19 +22,20 @@ const routeMap = {
   TR: { reverse: false },
   TQ: { reverse: false },
   TP: { reverse: false },
-  PW: { reverse: true }, //?
-  PV: { reverse: true }, //?
+  PW: { reverse: true }, 
+  PV: { reverse: true }, 
   TX: { reverse: false },
   WX: { reverse: true },
-  PX: { reverse: false }, //?
-  PZ: { reverse: true }, //?
+  PX: { reverse: false }, 
+  PZ: { reverse: true }, 
   PO: { reverse: false },
   PN: { reverse: false },
   NA: { reverse: false },
   NM: { reverse: true },
   MJ: { reverse: false },
   MI: { reverse: true },
-  IC: { reverse: false }, //?
+  IC: { reverse: false }, 
+  IJ: { reverse: false },
   CE: { reverse: false },
   EF: { reverse: false },
   EG: { reverse: false },
@@ -43,14 +44,14 @@ const routeMap = {
   JK: { reverse: false },
   HK: { reverse: false },
   GI: { reverse: false },
-  GJ: { reverse: true }, //?
+  GJ: { reverse: true }, 
 };
-//Map_Userが向く方向をルートごとに設定するための値
+//Map_Userの方向をルートごとに設定するための変数
 var RouteUserDir = new Map();
 var NowUserDir;
-//ルート逆のやつ
+//逆ルート用の変数
 var reverseArray = new Map();
-//画像修正が必要なやつ
+//画像修正が必要な変数
 var adjustImg = new Map();
 var routeMaxId = new Map();
 //hotspot格納
@@ -59,22 +60,22 @@ var hotSpots_g;
 var moveButtonX_g = 0;
 var moveButtonY_g = 0;
 //メモ-------------------------------------------------------
-//viewer.setPitch(viewer.getPitch() + 10);で視点の位置帰れるみたい
+//viewer.setPitch(viewer.getPitch() + 10);で視点の位置変更可能
 //viewer.setYaw(viewer.getYaw() - 10);
-var cursorX_g = 0; //パネリウムウィンドウ内の平面上における座標
+var cursorX_g = 0; //pannellumウィンドウ内の平面上における座標
 var cursorY_g = 0;
 var pitch_g = 0; //360度空間におけるカーソルの位置
 var yaw_g = 0;
 
-// 基準点の設定 撮影者の位置
+// 基準点の設定 撮影者位置
 const centerPitch = -90; // 基準となる中心点のピッチ
 const centerYaw = 12; // 基準となる中心点のヨー
 
-//矢印画像の座標調整ようパラメーーたー　矢印画像変える場合には変更の必要あり
+//矢印画像の座標調整用パラメータ
 const POSIMODIFY_X = -250;
 const POSIMODIFY_Y = -240;
 
-//移動前の地点を保s時
+//移動前の地点を保持するための変数
 var prevLocation_g;
 
 var isLoadComplete = false;
@@ -85,10 +86,10 @@ var moveLocationByCursor;
 //現在の地点の移動ボタン一覧
 var movePosi = [];
 
-//デバッグよう
+//デバッグ用変数
 var count = 1;
 
-//移動ボタンの範囲を管理するためのくらす
+//移動ボタンの範囲を管理するためのクラス
 class ManageMoveRange {
   static JSONFILEPATH = "./positionInfos.json";
   //moveSetting関数が正常に呼び出されたかを保持する
@@ -147,7 +148,7 @@ class ManageMoveRange {
     //現在地のマップ
     for (let i = 0; i < nowLocationInfo.moveSets.map.length; i++)
       this.map[i] = nowLocationInfo.moveSets.map[i];
-    //現在地更新(ここで呼び出すべきかはわからん)
+    //現在地更新
     MapCurrentUpDate(this.map);
 
     //地点に対応する視点の範囲情報
@@ -174,7 +175,7 @@ class ManageMoveRange {
 
       for (const range of splitedRanges) {
         const rangeInstance = new Range(range[0], range[1]);
-        //分割なしの時には普通に追加
+        //分割なしの通常追加
         this.ranges.push(rangeInstance);
       }
     }
@@ -214,12 +215,12 @@ class ManageMoveRange {
         // エラーハンドリング
         reject(error);
       } finally {
-        console.log("正常に終了しました。");
+        //console.log("正常に終了しました。");
       }
     });
   }
 
-  //クリックした位置の移動先を計算
+  //クリックした位置の移動先計算
   static getMovePlace(clickYaw) {
     for (var i = 0; i < this.ranges.length; i++) {
       //範囲内にあるかの計算
@@ -235,7 +236,7 @@ class ManageMoveRange {
 }
 class Range {
   constructor(yawSmall, yawLarge) {
-    // panellumの座標系に変換
+    // panellumの座標系変換
     this.yawSmall = Range.changeCoordinateForPannellum(yawSmall);
     this.yawLarge = Range.changeCoordinateForPannellum(yawLarge);
   }
@@ -274,10 +275,9 @@ async function waitForLoadAndExecute() {
     }, 100); // 100msごとにチェック
   });
 }
-//画面の移動ボタンを消す 正常に消せた場合にはtrue 異常 or ボタンがない場合にfalse返却
+//画面の移動ボタンを不可視化 正常に不可視化した場合にはtrue 異常 or ボタンがない場合にfalse返却
 async function hiddenMoveBtn() {
-  //移動ボタンを全て非表示
-  //デバッグ中
+  //移動ボタンを全て不可視化
   const pnlmSceneDivs = document.querySelectorAll("div.pnlm-scene");
   if (pnlmSceneDivs.length != 0) {
     pnlmSceneDivs.forEach((div) => {
@@ -292,7 +292,7 @@ async function hiddenMoveBtn() {
 
 async function addEventMoveBtn() {
   await getRoteStteing();
-  // //ぱねりうむの移動ボタンにリスナー追加
+  // //pannellumの移動ボタンにリスナー追加
   document.querySelectorAll("div.pnlm-scene").forEach((div) => {
     div.addEventListener("click", async function () {
       if (!isLoadComplete) {
@@ -304,7 +304,7 @@ async function addEventMoveBtn() {
       try {
         //ルートによって方向が違うので補正分
         var adjustYaw = 0;
-        await sleep(100); //これ消すと動かない
+        await sleep(100); //Don't remove this line
         var nowPosi = document
           .querySelector(".pnlm-title-box")
           .textContent.charAt(0);
@@ -367,7 +367,7 @@ async function addEventMoveBtn() {
     });
   });
 }
-//戻っている場合にはtrueを返却
+//戻っている場合にtrueを返す
 
 function isReturn(now, reverse, maxPosiId) {
   const prevLetter = prevLocation_g.charAt(0);
@@ -427,7 +427,7 @@ async function getRoteStteing() {
         // maxIdの設定
         routeMaxId.set(route, setting.maxId);
 
-        //map_userの向いている方向を設定
+        //map_userの方向を設定
         RouteUserDir.set(route, setting.mapdirection);
       });
 
@@ -472,7 +472,7 @@ function adjustArrowImg() {
   //   ManageMoveRange.ranges,
   //   ManageMoveRange.locations.indexOf(moveLocationByCursor)
   // );
-  // console.log("ここです", range);
+  // console.log("this", range);
   // console.log("movePosi:", movePosi);
   //デバッグ
   // console.log(ranges);
@@ -607,13 +607,14 @@ async function handleMouseUp() {
 
         //移動先が設定されていない場合
         if (!isExistLocation) {
-          alert("移動先が設定されていません");
+          // alert("移動先が設定されていません");
+          alert("操作が煩雑です。もう一度クリックしてください。");
         }
       } else {
-        console.log("範囲外でのクリック");
+        //console.log("範囲外でのクリック");
       }
     } else {
-      console.log("ドラッグ中のためクリックイベントを無視");
+      //console.log("ドラッグ中のためクリックイベントを無視");
     }
     isDragging = false;
   } catch (error) {
@@ -694,15 +695,15 @@ window.onload = async () => {
 };
 // 地点を移動できた場合には true、失敗時には false を返却
 async function move(location) {
-  // console.log("移動の処理を開始します");
-  // console.log(location, "のボタンを検索します。");
+  // //console.log("移動の処理を開始します");
+  // //console.log(location, "のボタンを検索します。");
   // 元々の移動ボタンを取得
   const pnlmSceneDivs = document.querySelectorAll("div.pnlm-scene");
   if (!pnlmSceneDivs.length) {
     alert("ページを再度読み込んでください");
     return false;
   }
-  // console.log("--移動先ボタン一覧---");
+  // //console.log("--移動先ボタン一覧---");
   // 取得した span タグのテキストと地点の名前が同じやつを探す
   for (let div of pnlmSceneDivs) {
     // div 内の span タグを全て取得
@@ -710,15 +711,15 @@ async function move(location) {
 
     // span タグのテキストと location を比較
     for (let span of spanElements) {
-      // console.log(span.textContent);
+      // //console.log(span.textContent);
       if (span.textContent === location) {
         // 擬似的に該当の移動ボタンをクリックする
         div.click();
 
-        console.log(
-          document.querySelector(".pnlm-title-box").textContent,
-          "に移動しました。"
-        );
+        // console.log(
+        //   document.querySelector(".pnlm-title-box").textContent,
+        //   "に移動しました。"
+        // );
         return true;
       }
     }
@@ -1050,7 +1051,7 @@ window.libpannellum = (function (E, g, p) {
       return h;
     }
     function Ea() {
-      console.log("Reducing canvas size due to error 1286!");
+      //console.log("Reducing canvas size due to error 1286!");
       A.width = Math.round(A.width / 2);
       A.height = Math.round(A.height / 2);
     }
@@ -3489,7 +3490,7 @@ window.pannellum = (function (E, g, p) {
     //   return this;
     // };
     this.setYaw = function (a, c, d, e) {
-      console.log("よびだした");
+      //console.log("よびだした");
       N = Date.now();
       if (1e-6 >= Math.abs(a - b.yaw))
         return "function" == typeof d && d(e), this;

@@ -345,8 +345,8 @@
       "positionId": "H3",
       "moveSets": {
           "straight": false,
-          "ranges": [-180, 0, 0, 180],
-          "locations": ["K0", "J32"],
+          "ranges": [-150, 0, 0, 150, 150, 210],
+          "locations": ["K0", "J32", "H2"],
           "map": [84.2, 40.7]
       }
     },

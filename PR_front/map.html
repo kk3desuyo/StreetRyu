@@ -113,9 +113,9 @@
       ManageMoveRange.isProcessing = true;
 
       try {
-        //ルートによって方向が違うので補正分
+        //ルートによって方向が違うので補正
         var adjustYaw = 0;
-        await sleep(100); //これ消すと動かない
+        await sleep(100); //don't remove this line
         console.log(document.querySelector(".pnlm-title-box").textContent);
         var nowPosi = document
           .querySelector(".pnlm-title-box")
@@ -130,26 +130,24 @@
           .textContent.charAt(0);
    
 
-        //キーが存在するか確認
+        //キーの存在確認
         if (
           routeMap[nowPosi + prevLocation_g.charAt(0)] != undefined ||
           routeMap[prevLocation_g.charAt(0) + nowPosi] != undefined ||
           prevLocation_g.charAt(0) == nowPosi
         ) {
           // "AB" と "BA" の両方に対応できるようにする
-          const key1 = prevLocation_g.charAt(0) + nowPosi;  // ABのパターン
-          const key2 = nowPosi + prevLocation_g.charAt(0);  // BAのパターン
+          const key1 = prevLocation_g.charAt(0) + nowPosi;  // AB
+          const key2 = nowPosi + prevLocation_g.charAt(0);  // BA
 
-          // routeMapにkey1があればそれを使い、なければkey2を使う
+          // routeMap key1 else key2 どちらかの値を取得
           const routeValue = routeMap[key1] || routeMap[key2];
-          console.log("xxxxxxxx"+routeMap[routeValue])
 
           // 文字が異なる場合の処理
           if (
             
             routeMap[routeValue]
           ) {
-            console.log("reverseありの戻っています");
             viewer.setYaw(Range.changeCoordinateForPannellum(180));
           } else {
             if (
@@ -159,129 +157,13 @@
                 routeMaxId.get(nowPosi)
               )
             ) {
-              console.log("reverseなしの戻っています");
               viewer.setYaw(180);
             }
             else {
-              console.log("reverseなしの戻っていません");
               viewer.setYaw(0);
             }
           }
         } else console.log("routeMapを指定してください。");
-        //   if()
-        // if (!reverseArray.has(nowPosi)) {
-        //   adjustYaw = reverseArray.get(nowPosi);
-        //   if (
-        //     isReturn(
-        //       document.querySelector(".pnlm-title-box").textContent,
-        //       false,
-        //       -1
-        //     )
-        //   ) {
-        //     viewer.setYaw(
-        //       Range.changeCoordinateForPannellum(
-        //         180 +
-        //           (adjustImg.get(
-        //             document
-        //               .querySelector(".pnlm-title-box")
-        //               .textContent.charAt(0)
-        //           ) == undefined
-        //             ? 0
-        //             : adjustImg.get(
-        //                 document
-        //                   .querySelector(".pnlm-title-box")
-        //                   .textContent.charAt(0)
-        //               ))
-        //       )
-        //     );
-        //   } else {
-        //     viewer.setYaw(
-        //       Range.changeCoordinateForPannellum(
-        //         adjustImg.get(
-        //           document
-        //             .querySelector(".pnlm-title-box")
-        //             .textContent.charAt(0)
-        //         ) == undefined
-        //           ? 0
-        //           : adjustImg.get(
-        //               document
-        //                 .querySelector(".pnlm-title-box")
-        //                 .textContent.charAt(0)
-        //             )
-        //       )
-        //     );
-        //   }
-        // } else {
-        //   if (
-        //     isReturn(
-        //       document.querySelector(".pnlm-title-box").textContent,
-        //       true,
-        //       routeMaxId.get(nowPosi)
-        //     )
-        //   ) {
-        //     console.log(
-        //       180 +
-        //         (adjustImg.get(
-        //           document
-        //             .querySelector(".pnlm-title-box")
-        //             .textContent.charAt(0)
-        //         ) == undefined
-        //           ? 0
-        //           : adjustImg.get(
-        //               document
-        //                 .querySelector(".pnlm-title-box")
-        //                 .textContent.charAt(0)
-        //             )),
-        //       Range.changeCoordinateForPannellum(
-        //         180 +
-        //           adjustImg.get(
-        //             document
-        //               .querySelector(".pnlm-title-box")
-        //               .textContent.charAt(0)
-        //           ) ==
-        //           undefined
-        //           ? 0
-        //           : adjustImg.get(
-        //               document
-        //                 .querySelector(".pnlm-title-box")
-        //                 .textContent.charAt(0)
-        //             )
-        //       )
-        //     );
-        //     viewer.setYaw(
-        //       Range.changeCoordinateForPannellum(
-        //         180 +
-        //           (adjustImg.get(
-        //             document
-        //               .querySelector(".pnlm-title-box")
-        //               .textContent.charAt(0)
-        //           ) == undefined
-        //             ? 0
-        //             : adjustImg.get(
-        //                 document
-        //                   .querySelector(".pnlm-title-box")
-        //                   .textContent.charAt(0)
-        //               ))
-        //       )
-        //     );
-        //   } else {
-        //     viewer.setYaw(
-        //       Range.changeCoordinateForPannellum(
-        //         adjustImg.get(
-        //           document
-        //             .querySelector(".pnlm-title-box")
-        //             .textContent.charAt(0)
-        //         ) == undefined
-        //           ? 0
-        //           : adjustImg.get(
-        //               document
-        //                 .querySelector(".pnlm-title-box")
-        //                 .textContent.charAt(0)
-        //             )
-        //       )
-        //     );
-        //   }
-        // }
 
         await waitForLoadAndExecute();
 
@@ -291,7 +173,6 @@
       } catch (error) {
         console.error("Error", error);
       } finally {
-        // console.log("Processing ended:", ManageMoveRange.isProcessing);
         ManageMoveRange.isProcessing = false;
       }
     });
