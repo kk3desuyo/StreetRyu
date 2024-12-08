@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Street Ryu</title>
+    <link rel="icon" href="image/logos/icon2.ico">
+    <link rel="stylesheet" href="pannellum/pannellum.css" />
+    <link rel="stylesheet" href="map-style.css" />
+    <script src="pannellum/pannellum.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="panorama"></div>
+    <div class="menu">
+        <img src="image/logos/menu-icon.png" alt="Menu" onclick="toggleMenu()">
+        <div class="menu-content" id="menuContent">
+            <div class="header">
+                <div class="close-btn" onclick="toggleMenu()">
+                    <img src="image/logos/menu-icon-white.png" alt="Close">
+                </div>
+                <p class="logo-text">STREET RYU</p>
+            </div>
+            <a href="index.html" class="top-page">TOP PAGE</a>
+            <div class="menu-section" id="buildings-section">
+                <h3 onclick="toggleSection('buildings')">
+                    Buildings <span class="arrow">▸</span>
+                </h3>
+                <div id="buildings" class="submenu">
+                    <a href="#" data-scene-id="A6">1号館</a>
+                    <a href="#" data-scene-id="B0">2号館</a>
+                    <a href="#" data-scene-id="C1">3号館</a>
+                    <a href="#" data-scene-id="G4">4号館</a>
+                    <a href="#" data-scene-id="T0">5号館</a>
+                    <a href="#" data-scene-id="Z1">6号館</a>
+                    <a href="#" data-scene-id="R6">7号館</a>
+                    <a href="#" data-scene-id="Z7">8号館</a>
+                    <a href="#" data-scene-id="R21">9号館</a>
+                    <a href="#" data-scene-id="G1">第1実験棟</a>
+                    <a href="#" data-scene-id="H0">第2実験棟</a>
+                </div>
+            </div>
+            <div class="menu-section" id="restaurants-section">
+                <h3 onclick="toggleSection('restaurants')">
+                    Restaurants <span class="arrow">▸</span>
+                </h3>
+                <div id="restaurants" class="submenu">
+                    <a href="#" data-scene-id="W8">青志館・青雲館</a>
+                </div>
+            </div>
+            <div class="menu-section" id="convenience-section">
+                <h3 onclick="toggleSection('convenience')">
+                    Convenience store <span class="arrow">▸</span>
+                </h3>
+                <div id="convenience" class="submenu">
+                    <a href="#" data-scene-id="A1">瀬田ショップSMYLE</a>
+                    <a href="#" data-scene-id="W8">ファミリーマート</a>
+                </div>
+            </div>
+            <div class="menu-section" id="sports-section">
+                <h3 onclick="toggleSection('sports')">
+                    Sports <span class="arrow">▸</span>
+                </h3>
+                <div id="sports" class="submenu">
+                    <a href="#" data-scene-id="U0">体育館</a>
+                    <a href="#" data-scene-id="X5">SETA DOME</a>
+                    <a href="#" data-scene-id="Z10">多目的グラウンド</a>
+                </div>
+            </div>
+            <div class="menu-section" id="others-section">
+                <h3 onclick="toggleSection('others')">
+                    Other buildings <span class="arrow">▸</span>
+                </h3>
+                <div id="others" class="submenu">
+                    <a href="#" data-scene-id="A4">図書館</a>
+                    <a href="#" data-scene-id="W6">学生交流会館</a>
+                    <a href="#" data-scene-id="N7">智光館</a>
+                    <a href="#" data-scene-id="L4">樹心館</a>
+                    <a href="#" data-scene-id="I4">RECホール</a>
+                    <a href="#" data-scene-id="Q4">HRC棟</a>
+                    <a href="#" data-scene-id="N6">バス停</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <img id="arrowButtonImg" src="image/arrow.png" alt="矢印" />
+
+    <div class="map_window">
+        <a href="image\map\map.png" class="overlay-zoombox" id="test_zoom"><img id="map_zoom" src="image\map\map.png" alt="マップ"/></a>
+        <img id="map_current" src="image\map\map.png" alt="マップ" />
+        <img id="map_user" src="image\map\user_arrow2.png" alt="ユーザ">
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="map-script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuSections = ['buildings', 'restaurants', 'convenience', 'sports', 'others'];
+            menuSections.forEach(section => {
+                const links = document.querySelectorAll(`#${section} a`);
+                links.forEach(link => {
+                    link.addEventListener('click', function(event) {
+                        document.querySelectorAll("div.pnlm-scene").forEach((div) => {
+    div.addEventListener("click", async function () {
+      if (!isLoadComplete) {
+        console.log("Load not complete, ignoring click");
+        return; // Prevent the click event from being processed
+      }
+
+      ManageMoveRange.isProcessing = true;
+
+      try {
+        //ルートによって方向が違うので補正
+        var adjustYaw = 0;
+        await sleep(100); //don't remove this line
+        console.log(document.querySelector(".pnlm-title-box").textContent);
+        var nowPosi = document
+          .querySelector(".pnlm-title-box")
+          .textContent.charAt(0);
+
+        NowUserDir = nowPosi;
+
+        const prevLetter = prevLocation_g.charAt(0);
+        
+        const nowLetter = document
+          .querySelector(".pnlm-title-box")
+          .textContent.charAt(0);
+   
+
+        //キーの存在確認
+        if (
+          routeMap[nowPosi + prevLocation_g.charAt(0)] != undefined ||
+          routeMap[prevLocation_g.charAt(0) + nowPosi] != undefined ||
+          prevLocation_g.charAt(0) == nowPosi
+        ) {
+          // "AB" と "BA" の両方に対応できるようにする
+          const key1 = prevLocation_g.charAt(0) + nowPosi;  // AB
+          const key2 = nowPosi + prevLocation_g.charAt(0);  // BA
+
+          // routeMap key1 else key2 どちらかの値を取得
+          const routeValue = routeMap[key1] || routeMap[key2];
+
+          // 文字が異なる場合の処理
+          if (
+            
+            routeMap[routeValue]
+          ) {
+            viewer.setYaw(Range.changeCoordinateForPannellum(180));
+          } else {
+            if (
+              isReturn(
+                document.querySelector(".pnlm-title-box").textContent,
+                false,
+                routeMaxId.get(nowPosi)
+              )
+            ) {
+              viewer.setYaw(180);
+            }
+            else {
+              viewer.setYaw(0);
+            }
+          }
+        } else console.log("routeMapを指定してください。");
+
+        await waitForLoadAndExecute();
+
+        await ManageMoveRange.moveSetting(
+          document.querySelector(".pnlm-title-box").textContent
+        );
+      } catch (error) {
+        console.error("Error", error);
+      } finally {
+        ManageMoveRange.isProcessing = false;
+      }
+    });
+  });
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

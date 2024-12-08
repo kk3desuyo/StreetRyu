@@ -1,0 +1,26 @@
+{
+  "positions": [
+    {
+      "positionId": "location1",
+      "moveSets": [
+        {
+          "positionId1": {
+            "rangeA": [30.0, 60.0],
+            "rangeB": [45.0, 90.0]
+          }
+        }
+      ]
+    },
+    {
+      "positionId": "location2",
+      "moveSets": {
+        "positionId1": [
+          {
+            "rangeA": [],
+            "rangeB": []
+          }
+        ]
+      }
+    }
+  ]
+}

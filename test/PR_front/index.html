@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ryukoku Online Open Campus</title>
+    <link rel="icon" href="image/logos/icon2.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="overlay" id="overlay"></div>
+    <div class="logo">
+        <a href="index.html">
+            <img src="image/logos/street_ryu.png" alt="Logo">
+        </a>
+    </div>  
+    <div class="main-container">
+        <div class="button-container">
+            <a href="map.html" class="image-button">
+                <div class="image-container">
+                    <img src="image/logos/Index.png" alt="Street Ryu">
+                </div>
+                <span class="button-text">Street Ryu</span>
+            </a>
+            <a href="tour.html" class="image-button">
+                <div class="image-container">
+                    <img src="image/logos/Index.png" alt="Street Tour">
+                </div>
+                <span class="button-text">Street Tour</span>
+            </a>
+        </div>
+        <div class="language-menu" onclick="toggleLanguageMenu()">
+            <button class="language-button">Japanese ▼</button>
+            <div class="language-dropdown" id="languageDropdown">
+                <a href="#" onclick="setLanguage('en'); return false;">English</a>
+                <a href="#" onclick="setLanguage('ko'); return false;">Korean</a>
+                <a href="#" onclick="setLanguage('zh'); return false;">Chinese</a>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

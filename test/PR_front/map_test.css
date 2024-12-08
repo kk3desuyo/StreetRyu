@@ -1,0 +1,45 @@
+/* これはマップ座標変更用CSSです。 */
+.map_window {
+  position: fixed;
+  display: grid; /*grid,place-itemsは変更不可*/
+  place-items: center;
+  top: 1vw;
+  right: 1vh;
+  width: 8vw;
+  aspect-ratio: 1 / 1;
+  z-index: 1;
+  cursor: pointer;
+  overflow: hidden; /*変更不可*/
+  border-radius: 100%;
+  border: 5px solid #f00;
+}
+#map_user {
+  width: 4vw;
+  position: absolute;
+  z-index: 2;
+  cursor: pointer;
+  margin: auto;
+  display: block;
+  pointer-events: none;
+}
+
+#map_zoom {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+#map_current {
+  width: 5vw;
+  height: auto;
+  position: absolute;
+  object-fit: cover;
+  text-align: center;
+  transform-origin: 97.0% 75.6%;
+  transform: scale(11); /*倍率絶対にいじるな*/
+  z-index: 2;
+  pointer-events: none;
+}

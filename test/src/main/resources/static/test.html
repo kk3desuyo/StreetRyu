@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p id="test"></p>
+<script>
+
+    // routeId と pointId の値を設定 (例)
+    const routeId = "RouteA";
+    const pointId = 2;
+
+    // APIのエンドポイントURL
+    const apiUrl = `/api/panorama/${routeId}/${pointId}`;
+    // fetch APIで画像のURLを取得
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} ${response.statusText}`);
+            }
+            console.log(response.text());
+            return response.text(); // レスポンスボディをテキストとして取得
+        })
+        .catch(error => {
+            console.error('Error fetching panorama image:', error);
+            // エラー処理（例：エラーメッセージを表示）
+        });
+
+</script>
+</body>
+</html>
