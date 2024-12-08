@@ -1,0 +1,275 @@
+@charset "utf-8";
+
+#panorama {
+  width: 100vw; /* ビューポートの幅全体を使用 */
+  height: 100vh; /* ビューポートの高さ全体を使用 */
+  position: fixed; /* 必要に応じて調整 */
+  top: 0vh;
+  left: 0;
+  z-index: 0; /* 他の要素が前面に来るように調整 */
+}
+
+.menu {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.menu img {
+  width: 35px; /* メニューアイコンの幅 */
+  height: 40px; /* メニューアイコンの高さ */
+}
+
+.close-btn img {
+  width: 20px; /* メニューアイコンの幅 */
+  height: 20px; /* メニューアイコンの高さ */
+}
+
+.close-btn {
+  margin-right: 30px; /* ロゴとの間隔 */
+}
+
+.menu-content {
+  display: block;
+  position: fixed;
+  left: 0px; /* 左端から表示 */
+  top: 0;
+  height: 100%;
+  width: 250px; /* メニューの幅を調整 */
+  background-color: rgb(230, 0, 18);
+  box-shadow: 5px 0 10px rgba(0, 0, 0, 0.5); /* 影の方向を左側に */
+  transform: translateX(-100%); /* 左に隠れるように */
+  transition: transform 0.65s ease;
+  font-family: "Arial", sans-serif;
+  padding-top: 0;
+  overflow-y: auto; /* 縦スクロールを有効に */
+}
+
+.menu-content a {
+  display: block;
+  color: rgb(255, 255, 255);
+  padding: 10px;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.menu-content a.top-page {
+  margin-bottom: 45px; /* 'TOP PAGE' と次のセクション間に20pxのマージンを設定 */
+  font-family: "Bungee", sans-serif;
+  display: block;
+  color: white;
+  padding: 4px;
+  text-decoration: none;
+  font-size: 18px;
+  background-color: rgb(200, 0, 0); /* 背景色を変更する場合 */
+}
+
+.menu-content a:hover {
+  background-color: #ffffff;
+  color: red;
+  font-weight: bold;
+}
+
+.header {
+  display: flex;
+  align-items: center; /* 中央揃え */
+  background-color: rgb(230, 0, 18);
+  padding: 10px;
+}
+
+.logo-text {
+  position: fixed;
+  right: 10%;
+  font-family: "Jaro", sans-serif; /* Robotoフォントを使用 */
+  color: white; /* 白色テキスト */
+  font-size: 22px; /* 文字サイズ */
+  font-weight: 600; /* 太字 */
+}
+
+.menu-section {
+  margin-bottom: 10px; /* セクション間のマージンを減らす */
+  padding-bottom: 10px; /* 必要に応じてパディングも調整 */
+}
+
+.menu-section h3 {
+  cursor: pointer;
+  font-family: "Teko", sans-serif;
+  color: white;
+  margin-top: 0; /* タイトル上のマージンを削除または減らす */
+  margin-bottom: 0; /* タイトル下のマージンを減らす */
+  padding: 4px;
+  font-size: 22px;
+  background-color: rgb(200, 0, 0);
+}
+
+.arrow {
+  display: inline-block; /* 矢印をインラインブロックとして配置 */
+  transition: transform 0.3s ease-in-out; /* トランジションでスムーズな表示変更を実現 */
+}
+
+.submenu {
+  height: 0px;
+  overflow: hidden;
+  transition: height 0.5s ease-out;
+}
+
+.submenu a {
+  color: white;
+  font-family: "Yomogi", sans-serif; /* Robotoフォントを使用 */
+
+  padding: 5px 20px;
+  text-decoration: none;
+  font-size: 20px;
+  overflow-y: auto; /* 縦スクロールを有効に */
+  background-color: rgb(230, 0, 18);
+}
+
+.submenu.open {
+  height: 0;
+  transition: height 0.5s ease-in;
+}
+
+.submenu a:hover {
+  background-color: #ffffff;
+  color: red;
+  font-weight: bold;
+}
+
+#arrowButtonImg {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  z-index: 1;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* スクロールバーを非表示にするスタイル */
+.menu-content::-webkit-scrollbar,
+.submenu::-webkit-scrollbar {
+  display: none; /* WebKitブラウザでスクロールバーを非表示に */
+}
+
+.menu-content,
+.submenu {
+  -ms-overflow-style: none; /* IEおよびEdgeでスクロールバーを非表示に */
+  scrollbar-width: none; /* Firefoxでスクロールバーを非表示に */
+}
+
+/* ここから作成始め */
+.map_window {
+  position: fixed;
+  display: grid; /*grid,place-itemsは変更不可*/
+  place-items: center;
+  top: 1vw;
+  right: 1vh;
+  width: 8vw;
+  aspect-ratio: 1 / 1;
+  z-index: 1;
+  cursor: pointer;
+  overflow: hidden; /*変更不可*/
+  border-radius: 100%;
+  border: 5px solid #f00;
+}
+#map_user {
+  width: 4vw;
+  position: absolute;
+  z-index: 2;
+  cursor: pointer;
+  margin: auto;
+  display: block;
+  pointer-events: none;
+}
+
+#map_zoom {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+#map_current {
+  width: 5vw;
+  height: auto;
+  position: absolute;
+  object-fit: cover;
+  text-align: center;
+  transform-origin: 69.2% 88.5%;
+  transform: scale(11); /*倍率変更不可*/
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* #map_current:hover {
+	opacity: 0.7;
+} 実装不可能？*/
+
+/* -- a.overlay-zoombox -------------------------------------------------------------------------------------------- */
+
+a.overlay-zoombox {
+	display: inline-block; /* これは必須です */
+}
+
+/* a.overlay-zoombox:hover {
+	opacity: 0.7;
+} */
+
+
+
+
+/* -- span.loading -------------------------------------------------------------------------------------------- */
+/* マップズームのロード画面関連　変更の必要なし*/
+span.loading {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	border-top: 5px solid rgba( 0, 0, 0, 0.5 );
+	border-right: 5px solid rgba( 0, 0, 0, 0.5 );
+	border-bottom: 5px solid rgba( 0, 0, 0, 0.5 );
+	border-left: 5px solid #ffffff;
+	-webkit-transform: translateZ( 0 );
+	-ms-transform: translateZ( 0 );
+	transform: translateZ( 0 );
+	-webkit-animation: load-circle 1.0s linear infinite;
+	animation: load-circle 1.0s linear infinite;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -30px;
+	margin-left: -30px;
+}
+
+@-webkit-keyframes load-circle {
+	0%{
+		-webkit-transform: rotate( 0deg );
+		transform: rotate( 0deg );
+	}
+	100%{
+		-webkit-transform: rotate( 360deg );
+		transform: rotate( 360deg );
+	}
+}
+
+@keyframes load-circle {
+	0%{
+		-webkit-transform: rotate( 0deg );
+		transform: rotate( 0deg );
+	}
+	100%{
+		-webkit-transform: rotate( 360deg );
+		transform: rotate( 360deg );
+	}
+}
+
+
+
+
+
+
+
+

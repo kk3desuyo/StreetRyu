@@ -1,0 +1,128 @@
+﻿@charset "utf-8";
+
+.logo {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 0;
+}
+
+.logo img {
+    width: 40%;
+    height: auto;
+}
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.main-container {
+    background-color: rgb(185,3,14);
+    color: white;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-container {
+    display: flex; /* 横並びに配置 */
+    justify-content: center; /* 中央揃え */
+    align-items: center; /* 縦軸も中央揃え */
+    gap: 400px; /* ボタン間のスペース */
+}
+
+.image-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none; /* リンクの下線を削除 */
+    color: white; /* テキストの色を白に設定 */
+    transition: transform 0.3s ease;
+    z-index: 1; /* ボタンを前面に */
+}
+
+.image-button:hover {
+    transform: scale(1.3); /* 10% 大きくする */
+}
+
+
+.image-container {
+    width: 100px; /* 画像のコンテナの幅 */
+    height: 100px; /* 画像のコンテナの高さ */
+    align-items: center;
+    justify-content: center;
+}
+
+.image-button img {
+    width: 100%; /* 画像の幅、縁の内側に収める */
+    height: auto;
+    object-fit: cover; /* 画像を適切にフィットさせる */
+}
+
+.button-text {
+    font-family: 'Teko', sans-serif;
+    font-size: 26px; /* テキストのサイズ */
+}
+
+
+.language-menu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 16px;
+}
+
+.language-button {
+    font-family: Bungee, sans-serif;
+    background: none;
+    border: none;
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.language-dropdown {
+    display: block;
+    border-radius: 15px;
+    opacity: 0; /* 初期状態では透明 */
+    max-height: 0; /* 初期状態では高さ0 */
+    overflow: hidden;
+    transition: opacity 0.4s ease, max-height 0.5s ease;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 4px 10px 20px 4px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.language-dropdown.open {
+    opacity: 1; /* 完全に表示 */
+    max-height: 100px; /* 十分な高さを設定 */
+}
+
+
+.language-dropdown a {
+    color: rgb(255, 0, 0);
+    font-family: Bungee, sans-serif;
+    padding: 6px 30px;
+    text-decoration: none;
+    display: block;
+}
+
+.language-dropdown a:hover {
+    background-color: #f1f1f1;
+    color: #d60000;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0); /* 初期状態では完全に透明 */
+    display: none;
+    z-index: 1; /* オーバーレイをボタンの後ろに */
+    transition: background-color 0.1s ease; /* 背景色の変化を滑らかに */
+}
