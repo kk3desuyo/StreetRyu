@@ -1,5 +1,5 @@
 ﻿var viewer;
-firstSceneId_g = "A0";
+firstSceneId_g = "J0";
 const JSONFILEPATH = "./positionInfos.json";
 // JSONファイルからデータを読み込む
 fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
@@ -8,7 +8,7 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
     //sceneを作成
     const createPannellumScenes = (jsonData) => {
       const scenes = {};
-
+    
       // 各positionIdをシーンとして追加
       jsonData.positions.forEach((position) => {
         const sceneId = position.positionId;
@@ -16,7 +16,7 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
         var yaw;
         var pitch;
         var count;
-
+    
         position.moveSets.straight == true
           ? (count = 2)
           : (count = position.moveSets.locations.length);
@@ -30,40 +30,21 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
               sceneId.charAt(0) + (basePositionNumber + 1); // 数字を1増やした地点
             const decrementedPosition =
               sceneId.charAt(0) + (basePositionNumber - 1); // 数字を1減らした地点
-            // console.log("base", basePositionNumber);
-            // console.log("inc", incrementedPosition);
-            // console.log("dec", decrementedPosition);
             // `ranges` の値に応じてyawを決定
-            if (i == 0) {
-              yaw = 0;
-            } else {
-              yaw = 180;
-            }
-
+            yaw = i == 0 ? 0 : 180;
+    
             // 自動的にlocationsを更新
-            position.moveSets.locations = [
-              incrementedPosition,
-              decrementedPosition,
-            ];
-          }
-          // 直進以外
-          else {
+            position.moveSets.locations = [incrementedPosition, decrementedPosition];
+          } else {
             yaw = calculateMidYaw(
               position.moveSets.ranges[i * 2],
               position.moveSets.ranges[i * 2 + 1]
             );
           }
-
+    
           const pitch = 0;
-
+    
           const targetLocation = position.moveSets.locations[i];
-          // console.log({
-          //   pitch: pitch,
-          //   yaw: yaw,
-          //   type: "scene",
-          //   text: targetLocation,
-          //   sceneId: targetLocation,
-          // });
           hotSpots.push({
             pitch: pitch,
             yaw: yaw,
@@ -72,7 +53,25 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
             sceneId: targetLocation,
           });
         }
-        //console.log("-------------------------------------");
+    
+        // buildings情報からカスタムホットスポットを追加
+        if (position.moveSets.buildings && position.moveSets.buildings.length > 0) {
+          position.moveSets.buildings.forEach((building) => {
+            hotSpots.push({
+              pitch: building.pitch || 0,
+              yaw: building.yaw || 0,
+              type: "custom",
+              cssClass: "custom-hotspot",
+              createTooltipFunc: buildingHotspot,
+              createTooltipArgs: {
+                name: building.name,
+                description: building.description,
+                img: building.img,
+              },
+            });
+          });
+        }
+    
         // 各positionに対応するシーンを生成
         scenes[sceneId] = {
           title: sceneId,
@@ -82,10 +81,60 @@ fetch(JSONFILEPATH) // 'data.json'はjsonファイルのパス
           hotSpots: hotSpots,
         };
       });
-      //console.log(scenes);
       return scenes;
     };
 
+    // カスタムホットスポットの作成関数
+    function buildingHotspot(hotSpotDiv, args) {
+      hotSpotDiv.classList.add('custom-hotspot');
+      hotSpotDiv.style.width = '200px';
+      hotSpotDiv.style.padding = '10px';
+      hotSpotDiv.style.background = '#fff';
+      hotSpotDiv.style.borderRadius = '10px';
+      hotSpotDiv.style.textAlign = 'center';
+
+      const title = document.createElement('h3');
+      title.textContent = args.name;
+      hotSpotDiv.appendChild(title);
+
+      const description = document.createElement('p');
+      description.textContent = args.description;
+      hotSpotDiv.appendChild(description);
+      console.log(args.img);
+      if (args.img) {
+        const image = document.createElement('img');
+        image.src = `${args.img}`; // 画像のパスを適切に設定してください
+        image.style.width = '100%';
+        image.style.borderRadius = '5px';
+        hotSpotDiv.appendChild(image);
+      }
+    }
+
+    // カスタムホットスポット用のCSSを追加
+    const style = document.createElement('style');
+    style.innerHTML = `
+    .custom-hotspot {
+      width: 200px;
+      padding: 10px;
+      background: #fff;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .custom-hotspot h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+    .custom-hotspot p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    .custom-hotspot img {
+      margin-top: 5px;
+      width: 100%;
+      border-radius: 5px;
+    }
+    `;
+    document.head.appendChild(style);
     // pannellum viewerを生成
     viewer = pannellum.viewer("panorama", {
       default: {

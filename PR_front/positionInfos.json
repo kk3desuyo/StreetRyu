@@ -32,7 +32,8 @@
         "straight": false,
         "ranges": [-90, 90, 90, 180, 180, 270],
         "locations": ["A1", "M10", "N8"],
-        "map": [69.2, 88.5]
+        "map": [69.2, 88.5],
+        "buildings":[{"name":"一号館","img":"1.jpg","description":"一号館の説明","pitch":0,"yaw":0}]
       }
     },
     {
@@ -203,7 +204,8 @@
         "straight": false,
         "ranges": [-120, 0, 0, 120, 120, 240],
         "locations": ["F0", "G0", "E1"],
-        "map": [74.7, 50.5]
+        "map": [74.7, 50.5],
+        "buildings":[{"name":"一号館","img":"./image/buildings/steam.png","description":"キャンパス内でもっと高い建物！！館内には最新の機器を揃えた実験室、研究室、教務課、学生をバックアップするキャリアセンターがあります。","pitch":10,"yaw":-90}]
       }
     },
     {
@@ -275,7 +277,8 @@
         "straight": false,
         "ranges": [-90, 90, 90, 150, 150, 270],
         "locations": ["G1", "E2", "F0"],
-        "map": [76.7, 49.5]
+        "map": [76.7, 49.5],
+        "buildings":[{"name":"一号館","img":"./image/buildings/steam.png","description":"キャンパス内でもっと高い建物！！館内には最新の機器を揃えた実験室、研究室、教務課、学生をバックアップするキャリアセンターがあります。","pitch":10,"yaw":-180}]
         }
     },
     {
@@ -285,6 +288,7 @@
         "ranges": [],
         "locations": [],
         "map": [79.0, 49.5]
+        
         }
     },
     {
@@ -293,7 +297,8 @@
           "straight": true,
           "ranges": [],
           "locations": [],
-          "map": [80.3, 49.5]
+          "map": [80.3, 49.5],
+          "buildings":[{"name":"実験棟","img":"./image/buildings/steam.png","description":"応用科学課程、知能情報課程などさまざまな課程が実験をするときに使う建物です。","pitch":10,"yaw":-80},{"name":"三号館","img":"./image/buildings/steam.png","description":"主に講義で使用することが多く、平日に解放されているコンピューター室があります。","pitch":10,"yaw":80}]
         }
     },
     {
@@ -302,7 +307,8 @@
           "straight": true,
           "ranges": [],
           "locations": [],
-          "map": [83.0, 49.5]
+          "map": [83.0, 49.5],
+          "buildings":[{"name":"実験棟","img":"./image/buildings/steam.png","description":"応用科学課程、知能情報課程などさまざまな課程が実験をするときに使う建物です。","pitch":10,"yaw":-140},{"name":"三号館","img":"./image/buildings/steam.png","description":"主に講義で使用することが多く、平日に解放されているコンピューター室があります。","pitch":10,"yaw":120}]
         }
     },
     {
@@ -311,7 +317,8 @@
           "straight": false,
           "ranges": [-135, -45, -45, 90, 90, 225],
           "locations": ["H0", "I0", "G3"],
-          "map": [85.0, 50.5]
+          "map": [85.0, 50.5],
+          "buildings":[{"name":"実験棟","img":"./image/buildings/steam.png","description":"応用科学課程、知能情報課程などさまざまな課程が実験をするときに使う建物です。","pitch":10,"yaw":-120}]
         }
     },
     {
@@ -968,7 +975,7 @@
         "straight": false,
         "ranges": [-90, 45, 45, 135, 135, 270],
         "locations": ["W0", "U0", "L5"],
-        "map": [51.8, 47.2]
+        "map": [51.8, 47.2],"buildings":[{"name":"体育館","description":"自然に囲まれた瀬田学舎の中で、木造による擬洋風建築はひときわ目立っていますが、その内装も非常に手が込んだものとなっています。","pitch":10,"yaw":-40},{"name":"受信館","description":"自然に囲まれた瀬田学舎の中で、木造による擬洋風建築はひときわ目立っていますが、その内装も非常に手が込んだものとなっています。","pitch":10,"yaw":100}]
       }
     },
     {
@@ -1589,7 +1596,8 @@
         "straight": false,
         "ranges": [-90, 90, 90, 180, 180, 270],
         "locations": ["U1", "L6", "W0"],
-        "map": [51.8, 46.5]
+        "map": [51.8, 46.5],
+        "buildings":[{"name":"体育館","img":"image/buildings/gym.jpg","description":"体育の授業やササークルで使用します。コンディショニングコーチとアスレティックトレーナーにトレーニングの指導も受けることができます。","pitch":10,"yaw":-40},{"name":"樹心館","description":"自然に囲まれた瀬田学舎の中で、木造による擬洋風建築はひときわ目立っていますが、その内装も非常に手が込んだものとなっています。","pitch":10,"yaw":40},{"name":"3号館","description":"自然に囲まれた瀬田学舎の中で、木造による擬洋風建築はひときわ目立っていますが、その内装も非常に手が込んだものとなっています。","pitch":10,"yaw":170}]
       }
     },
     {

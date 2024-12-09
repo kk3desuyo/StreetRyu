@@ -1,6 +1,6 @@
 // Pannellum 2.5.6, https://github.com/mpetroff/pannellum
 
-const routeMap = {
+const routeRelationMap = {
   AB: { reverse: true },
   AC: { reverse: false },
   AM: { reverse: true },
@@ -39,7 +39,7 @@ const routeMap = {
   CE: { reverse: false },
   EF: { reverse: false },
   EG: { reverse: false },
-  FG: { reverse: false },
+  FG: { reverse: true },
   JH: { reverse: true },
   JK: { reverse: false },
   HK: { reverse: false },
@@ -316,43 +316,15 @@ async function addEventMoveBtn() {
         const nowLetter = document
           .querySelector(".pnlm-title-box")
           .textContent.charAt(0);
-   
-
-        //キーが存在するか確認
-        if (
-          routeMap[nowPosi + prevLocation_g.charAt(0)] != undefined ||
-          routeMap[prevLocation_g.charAt(0) + nowPosi] != undefined ||
-          prevLocation_g.charAt(0) == nowPosi
-        ) {
-          // "AB" と "BA" の両方に対応できるようにする
-          const key1 = prevLocation_g.charAt(0) + nowPosi;  // ABのパターン
-          const key2 = nowPosi + prevLocation_g.charAt(0);  // BAのパターン
-
-          // routeMapにkey1があればそれを使い、なければkey2を使う
-          const routeValue = routeMap[key1] || routeMap[key2];
-
-          // 文字が異なる場合の処理
-          if (
             
-            routeMap[routeValue]
-          ) {
-            viewer.setYaw(Range.changeCoordinateForPannellum(180));
-          } else {
-            if (
-              isReturn(
-                document.querySelector(".pnlm-title-box").textContent,
-                false,
-                routeMaxId.get(nowPosi)
-              )
-            ) {
-              viewer.setYaw(180);
-            }
-            else {
-              viewer.setYaw(0);
-            }
-          }
-        } else {}
+          const prevChar = prevLocation_g.charAt(0);
+          const currChar = nowPosi;
 
+          
+          const currentTitle = document.querySelector(".pnlm-title-box").textContent;
+          if(isReturn(currentTitle)){
+            viewer.setYaw(180);
+          }
 
         await waitForLoadAndExecute();
 
@@ -367,45 +339,29 @@ async function addEventMoveBtn() {
     });
   });
 }
-//戻っている場合にtrueを返す
+//写真の後方に向かっている場合にtrueを返す
+function isReturn(currentLocation) {
+  const prevChar = prevLocation_g.charAt(0);
+  const prevNumber = parseInt(prevLocation_g.match(/\d+/)[0]);
+  const currChar = currentLocation.charAt(0);
+  const currNumber = parseInt(currentLocation.match(/\d+/)[0]);
 
-function isReturn(now, reverse, maxPosiId) {
-  const prevLetter = prevLocation_g.charAt(0);
-  const prevNum = parseInt(prevLocation_g.match(/\d+/)[0]);
-  const nowLetter = now.charAt(0);
-  const nowNumber = parseInt(now.match(/\d+/)[0]);
-
-  if (reverse == false) {
-    // 文字が異なる場合の処理
-    if (prevLetter !== nowLetter) {
-      if (nowNumber === 0) {
-        return false;
-      } else {
-        return true;
-      }
-    }
-    if (prevNum< nowNumber) {
-      return false;
-    } else {
-      return true;
-    }
-  } else {
-    // 文字が異なる場合の処理
-    if (prevLetter !== nowLetter) {
-      if (nowNumber === maxPosiId) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-
-    // 文字が同じ場合の処理
-    if (prevNum > nowNumber) {
-      return false;
-    } else {
-      return true;
-    }
+  //同じルートの場合の判定
+  if(prevChar === currChar){
+    return prevNumber >= currNumber;
   }
+
+  //ルートが異なる場合の判定
+  const key1 = prevChar + currChar; // ABパターン
+  const key2 = currChar + prevChar; // BAパターン
+  // ルートマップ内にkey1またはkey2が存在するか、または同じ文字かを確認
+  const keyExists = routeRelationMap[key1] !== undefined || routeRelationMap[key2] !== undefined || prevChar === currChar;
+
+  if (keyExists) {
+    const routeValue = routeRelationMap[key1] || routeRelationMap[key2];    
+    return routeValue.reverse;
+  }
+  else throw new Error("ルート情報が見つかりませんでした。");
 }
 
 async function getRoteStteing() {
@@ -441,53 +397,17 @@ async function getRoteStteing() {
 
 //矢印画像の方向を移動する方向に補正する関数
 function adjustArrowImg() {
-  //どの移動ボタンに向くべきなのかを計算
-  //地点名から配列のインデックスを取得し、その地点の範囲を検索
-  // 対象の location のインデックスをすべて取得
   let indices = [];
   for (let i = 0; i < ManageMoveRange.locations.length; i++) {
     if (ManageMoveRange.locations[i] === moveLocationByCursor) {
       indices.push(i);
     }
   }
-
-
   // インデックスに対応する ranges を取得
   let ranges = indices.map((index) => ManageMoveRange.ranges[index]);
-
-  //moveLocation: hunsui
-  // [Range]
-  // 0
-  // :
-  // Range {yawSmall: -90, yawLarge: 0}
-  // length
-  // :
-  // 1
-  // [[Prototype]]
-  //ranges配列には2こ移動ボタンはあっても一つしか配列の要素がないのでoutBouds
-
-  // console.log(
-  //   "moveLocation:",
-  //   moveLocationByCursor,
-  //   ManageMoveRange.ranges,
-  //   ManageMoveRange.locations.indexOf(moveLocationByCursor)
-  // );
-  // console.log("this", range);
-  // console.log("movePosi:", movePosi);
-  //デバッグ
-  // console.log(ranges);
-  // console.log("クリックすると", moveLocationByCursor, "に移動");
   for (var i = 0; i < movePosi.length; i++) {
     //移動ボタンの位置が特定できた場合
     for (var j = 0; j < ranges.length; j++) {
-      // console.log(
-      //   "rangeSmall:rangeBig",
-      //   ranges[j].yawSmall,
-      //   ranges[j].yawLarge,
-      //   "移動ボタンの位置 pitch:yaw",
-      //   movePosi[i][0],
-      //   movePosi[i][1]
-      // );
       if (
         ranges[j].yawSmall <= movePosi[i][1] &&
         ranges[j].yawLarge >= movePosi[i][1]
@@ -501,10 +421,6 @@ function adjustArrowImg() {
 
 //画像を回転させる
 function rotateArrow(pitchMoveBtn, yawMoveBtn) {
-  // console.log(moveButtonX_g);
-  // console.log(moveLocationByCursor);
-  // console.log(hotSpots_g);
-  // pitch_gとyaw_gはグローバル変数として定義されていると仮定します
   // 向きの計算
   var deltaX = moveButtonY_g - cursorY_g;
   var deltaY = moveButtonX_g - cursorX_g;
@@ -535,7 +451,7 @@ function rotateArrow(pitchMoveBtn, yawMoveBtn) {
 
     // スケールを計算
     const scale = scaleImageBasedOnDistance(distance, maxDistance);
-    // console.log("角度", (angle + 1) % 360);
+
     // 要素の位置を中心に回転させる
     if ((yaw_g >= 0 && yaw_g <= 90) || (yaw_g <= -90 && yaw_g >= -180)) {
       // console.log("補正有効");
@@ -595,12 +511,6 @@ async function handleMouseUp() {
     if (!isDragging) {
       // パノラマ内のクリックにのみ反応
       if (isCursorInPanorama(cursorX_g, cursorY_g)) {
-        //移動の処理
-        // console.log(
-        //   "クリックされた場所では",
-        //   ManageMoveRange.getMovePlace(yaw_g),
-        //   "に移動します。"
-        // );
         var isExistLocation = await move(ManageMoveRange.getMovePlace(yaw_g));
 
         //移動地点にて再度移動ボタンのリスナー追加 + ボタン非表示
