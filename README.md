@@ -1,4 +1,4 @@
-Zenn : https://zenn.dev/kk3desu
+Zenn : [https://zenn.dev/kk3desu](https://zenn.dev/kk3desu/articles/d758ebf2acc7b9)
 
 # オンライン上でオープンキャンパスを実現できるシステム
 
